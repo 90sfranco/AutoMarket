@@ -57,7 +57,7 @@ async function crearUsuario(nombre, email, identificacion, telefono, direccion, 
 
 // Actualizar un usuario
 async function actualizarUsuario(id, nombre, email, telefono, direccion, usuario, password) {
-    const result = await connection.query(
+    const [result] = await connection.query(
         'UPDATE usuarios SET nombre = ?, email = ?, telefono = ?, direccion = ?, usuario = ?, password = ? WHERE id = ?',
         [nombre, email, telefono, direccion, usuario, password, id]
     );
@@ -67,7 +67,7 @@ async function actualizarUsuario(id, nombre, email, telefono, direccion, usuario
 
 // Borrar un usuario
 async function borrarUsuario(id) {
-    const result = await connection.query('DELETE FROM usuarios WHERE id = ?', [id]);
+    const [result] = await connection.query('DELETE FROM usuarios WHERE id = ?', [id]);
     return result;
 }
 
