@@ -15,6 +15,7 @@ const connection = mysql.createPool({
  */
 async function getAllVehicles() {
     const result = await connection.query('SELECT * FROM vehiculo');
+    console.log(`Total de vehiculos: ${result[0].length}`);
     return result[0];
 }
 
