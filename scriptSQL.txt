@@ -1,0 +1,202 @@
+-- Crear las bases de datos si no existen
+CREATE DATABASE IF NOT EXISTS UsuariosDBAuto;
+CREATE DATABASE IF NOT EXISTS VehiculosDBAuto;
+CREATE DATABASE IF NOT EXISTS ContratosDBAuto;
+CREATE DATABASE IF NOT EXISTS VentasDBAuto;
+
+------------------------------------------------------------
+-- Configuración para la base de datos de usuarios
+------------------------------------------------------------
+USE UsuariosDBAuto;
+
+-- Borrar la tabla usuarios si ya existe
+DROP TABLE IF EXISTS usuarios;
+
+-- Crear la tabla usuarios
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    identificacion VARCHAR(20) NOT NULL UNIQUE,
+    telefono VARCHAR(20),
+    direccion VARCHAR(255),
+    usuario VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+-- Insertar datos en la tabla usuarios
+INSERT INTO usuarios (nombre, email, identificacion, telefono, direccion, usuario, password)
+VALUES
+    ('Juan Perez', 'juan.perez@mail.com', '1234567890', '3001234567', 'Calle 123, Bogotá', 'juanp', 'abc006'),
+    ('Ana Gómez', 'ana.gomez@mail.com', '1234567891', '3001234568', 'Calle 124, Bogotá', 'anag', 'def456'),
+    ('Carlos Martínez', 'carlos.martinez@mail.com', '1234567892', '3001234569', 'Calle 125, Bogotá', 'carlosm', 'ghi789'),
+    ('Lucia Lopez', 'lucia.lopez@mail.com', '1234567893', '3001234570', 'Calle 126, Bogotá', 'lucial', 'jkl101'),
+    ('Pedro Rodriguez', 'pedro.rodriguez@mail.com', '1234567894', '3001234571', 'Calle 127, Bogotá', 'pedror', 'mno202'),
+    ('Marta Sanchez', 'marta.sanchez@mail.com', '1234567895', '3001234572', 'Calle 128, Bogotá', 'martas', 'pqr303'),
+    ('Jorge Fernandez', 'jorge.fernandez@mail.com', '1234567896', '3001234573', 'Calle 129, Bogotá', 'jorgef', 'stu404'),
+    ('Isabel Perez', 'isabel.perez@mail.com', '1234567897', '3001234574', 'Calle 130, Bogotá', 'isabelp', 'vwx505'),
+    ('David Garcia', 'david.garcia@mail.com', '1234567898', '3001234575', 'Calle 131, Bogotá', 'davidg', 'yzx606'),
+    ('Sofia Ramirez', 'sofia.ramirez@mail.com', '1234567899', '3001234576', 'Calle 132, Bogotá', 'sofiar', 'suuu');
+
+------------------------------------------------------------
+-- Configuración para la base de datos de vehículos
+------------------------------------------------------------
+USE VehiculosDBAuto;
+
+-- Borrar la tabla vehiculo si ya existe
+DROP TABLE IF EXISTS vehiculo;
+
+-- Crear la tabla vehiculo
+CREATE TABLE vehiculo (
+    id_vehiculo INT AUTO_INCREMENT PRIMARY KEY,
+    marca VARCHAR(50) NOT NULL,
+    anio INT NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    kilometraje INT NOT NULL,
+    tipo_carroceria VARCHAR(50) NOT NULL,
+    num_cilindros INT NOT NULL,
+    transmision VARCHAR(20) NOT NULL,
+    tren_traction VARCHAR(20) NOT NULL,
+    color_interior VARCHAR(30) NOT NULL,
+    color_exterior VARCHAR(30) NOT NULL,
+    num_pasajeros INT NOT NULL,
+    num_puertas INT NOT NULL,
+    tipo_combustible VARCHAR(30) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    estado VARCHAR(10) NOT NULL,
+    id_usuario INT NOT NULL
+);
+
+USE VehiculosDBAuto;
+
+LOAD DATA INFILE 'C:/Users/franc/OneDrive - Universidad Autonoma de Occidente/Documentos/01-UAO/S4/REDES/CORTE 2/ENTREGAS/AutoMarketData/used_vehicles_for_sale.csv'
+INTO TABLE vehiculo
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(anio, marca, modelo, kilometraje, tipo_carroceria, num_cilindros, transmision, tren_traction, color_exterior, color_interior, num_pasajeros, num_puertas, tipo_combustible, precio, estado, id_usuario);
+
+
+-- Usar la base de datos ContratosDBAuto
+USE ContratosDBAuto;
+
+-- Borrar la tabla contrato si ya existe para garantizar que se cree de nuevo
+DROP TABLE IF EXISTS contrato;
+
+CREATE TABLE contrato (
+    id_contrato INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Información del comprador
+    comprador_nombre VARCHAR(100) NOT NULL,
+    comprador_email VARCHAR(100) NOT NULL,
+    comprador_identificacion VARCHAR(20) NOT NULL,
+    id_comprador INT NOT NULL,
+    
+    -- Información del vendedor
+    vendedor_nombre VARCHAR(100) NOT NULL,
+    vendedor_email VARCHAR(100) NOT NULL,
+    vendedor_identificacion VARCHAR(20) NOT NULL,
+    id_vendedor INT NOT NULL,
+    
+    -- Información del vehículo
+    id_vehiculo INT NOT NULL,
+    vehiculo_marca VARCHAR(50) NOT NULL,
+    vehiculo_anio INT NOT NULL,
+    vehiculo_modelo VARCHAR(50) NOT NULL,
+    vehiculo_kilometraje INT NOT NULL,
+    vehiculo_tipo_carroceria VARCHAR(50) NOT NULL,
+    vehiculo_num_cilindros INT NOT NULL,
+    vehiculo_transmision VARCHAR(20) NOT NULL,
+    vehiculo_tren_traction VARCHAR(20) NOT NULL,
+    vehiculo_color_interior VARCHAR(30) NOT NULL,
+    vehiculo_color_exterior VARCHAR(30) NOT NULL,
+    vehiculo_num_pasajeros INT NOT NULL,
+    vehiculo_num_puertas INT NOT NULL,
+    vehiculo_tipo_combustible VARCHAR(30) NOT NULL,
+    vehiculo_precio DECIMAL(10,2) NOT NULL,
+    
+    -- Condiciones del contrato
+    condiciones_pago TEXT NOT NULL,
+    comision_fija DECIMAL(10,2) NOT NULL,
+    estado_contrato VARCHAR(20) NOT NULL,
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+);
+INSERT INTO contrato (
+    comprador_nombre, comprador_email, comprador_identificacion, id_comprador, 
+    vendedor_nombre, vendedor_email, vendedor_identificacion, id_vendedor, 
+    id_vehiculo, vehiculo_marca, vehiculo_anio, vehiculo_modelo, vehiculo_kilometraje, 
+    vehiculo_tipo_carroceria, vehiculo_num_cilindros, vehiculo_transmision, 
+    vehiculo_tren_traction, vehiculo_color_interior, vehiculo_color_exterior, 
+    vehiculo_num_pasajeros, vehiculo_num_puertas, vehiculo_tipo_combustible, 
+    vehiculo_precio, condiciones_pago, comision_fija, estado_contrato
+) VALUES
+    -- Contrato 1: Audi Q7 (2019)
+    ('Juan Perez', 'juan.perez@mail.com', '1234567890', 1, 
+     'Carlos Martínez', 'carlos.martinez@mail.com', '1234567892', 5, 
+     101, 'Audi', 2019, 'Q7', 117207, 
+     'SUV', 6, '8 Speed Automatic', 
+     'AWD', 'Black', 'Galaxy Blue Metallic', 
+     7, 4, 'Gas', 46890.00, 
+     'Pago en dos cuotas: 50% al firmar y 50% al recibir el vehículo.', 
+     100000.00, 'completado'),
+
+    -- Contrato 2: Porsche Cayenne (2019)
+    ('Ana Gómez', 'ana.gomez@mail.com', '1234567891', 2, 
+     'Pedro Rodriguez', 'pedro.rodriguez@mail.com', '1234567894', 7, 
+     102, 'Porsche', 2019, 'Cayenne', 76900, 
+     'SUV', 6, 'Automatic', 
+     'AWD', 'Red', 'Polar White', 
+     5, 4, 'Gas', 73999.00, 
+     'Pago único por transferencia bancaria antes de la entrega.', 
+     100000.00, 'completado'),
+
+    -- Contrato 3: Infiniti Q50 (2020)
+    ('Carlos Martínez', 'carlos.martinez@mail.com', '1234567892', 3, 
+     'Lucia Lopez', 'lucia.lopez@mail.com', '1234567893', 4, 
+     103, 'Infiniti', 2020, 'Q50', 71942, 
+     'Sedan', 6, '7 Speed Automatic', 
+     'AWD', 'Black', 'White', 
+     5, 4, 'Gas', 29880.00, 
+     'Financiado en 12 meses con tasa del 5% anual.', 
+     100000.00, 'completado'),
+
+    -- Contrato 4: Kia Sorento (2022)
+    ('Lucia Lopez', 'lucia.lopez@mail.com', '1234567893', 4, 
+     'Marta Sanchez', 'marta.sanchez@mail.com', '1234567895', 1, 
+     104, 'Kia', 2022, 'Sorento', 17301, 
+     'SUV', 4, 'Automatic', 
+     'AWD', 'Black', 'Glacial White Pearl', 
+     6, 4, 'Gas', 49963.00, 
+     'Pago con cheque certificado a nombre del vendedor.', 
+     100000.00, 'completado'),
+
+    -- Contrato 5: Volkswagen Atlas (2023)
+    ('Pedro Rodriguez', 'pedro.rodriguez@mail.com', '1234567894', 5, 
+     'Jorge Fernandez', 'jorge.fernandez@mail.com', '1234567896', 9, 
+     105, 'Volkswagen', 2023, 'Atlas', 90, 
+     'SUV', 6, '8 Speed Automatic', 
+     'AWD', 'Black', 'Pure White', 
+     6, 4, 'Gas', 62375.00, 
+     '50% al contado y 50% financiado en 6 meses.', 
+     100000.00, 'completado');
+
+USE VentasDBAuto;
+
+DROP TABLE IF EXISTS ventas;
+
+-- Crear la tabla ventas
+CREATE TABLE ventas (
+    id_venta INT AUTO_INCREMENT PRIMARY KEY, 
+    id_contrato INT NOT NULL, 
+    total_venta DECIMAL(10, 2) NOT NULL,
+    fecha_venta DATETIME DEFAULT CURRENT_TIMESTAMP
+    
+);
+INSERT INTO ventas (id_contrato, total_venta) VALUES
+    (1, 56990.00),  
+    (2, 83999.00),  
+    (3, 39880.00),  
+    (4, 59963.00),  
+    (5, 72375.00);  
