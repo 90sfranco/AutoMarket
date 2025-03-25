@@ -51,6 +51,9 @@ router.post('/usuarios/login', async (req, res) => {
             res.json(result[0]);
         } else {
             res.status(401).send("Credenciales incorrectas.");
+            console.log(`Usuario: ${usuario}`);
+            console.log(`Password: ${password}`);
+            
         }
     } catch (error) {
         res.status(500).send(`Error de servidor: ${error.message}`);

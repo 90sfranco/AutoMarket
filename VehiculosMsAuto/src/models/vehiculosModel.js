@@ -18,6 +18,43 @@ async function getAllVehicles() {
     console.log(`Total de vehiculos: ${result[0].length}`);
     return result[0];
 }
+/**
+ * Obtiene todos los vehículos por usuario vendedor
+ */
+async function getVehiclesByUser(id) {
+    const result = await connection.query('SELECT * FROM vehiculo WHERE id_usuario = ?', [id]);
+    console.log(`Total de vehiculos: ${result[0].length}`);
+    return result[0];
+}
+
+/**
+ * Obtiene vehículos filtrados según la marca y/o rango de precio.
+ * Si no se envía alguno de los filtros, se omite esa condición.
+ */
+async function getFilteredVehicles(filters) {
+    let sql = "SELECT * FROM vehiculo WHERE 1=1 AND estado='disponible'";
+    const params = [];
+
+    if (filters.marca) {
+        sql += " AND marca = ?";
+        params.push(filters.marca);
+    }
+    
+    if (filters.precio_inicial && filters.precio_final) {
+        sql += " AND precio BETWEEN ? AND ?";
+        params.push(filters.precio_inicial, filters.precio_final);
+    } else if (filters.precio_inicial) {
+        sql += " AND precio >= ?";
+        params.push(filters.precio_inicial);
+    } else if (filters.precio_final) {
+        sql += " AND precio <= ?";
+        params.push(filters.precio_final);
+    }
+    
+    console.log("Consulta filtrada:", sql, params);
+    const result = await connection.query(sql, params);
+    return result[0];
+}
 
 
 /**
@@ -108,6 +145,16 @@ async function updateVehicle(
     return result;
 }
 
+async function updateVehicleState(id, estado) {
+    const query = `
+        UPDATE vehiculo
+        SET estado = ?
+        WHERE id_vehiculo = ?;
+    `;
+    const [result] = await connection.execute(query, [estado, id]);
+    return result;  // Retorna el resultado de la consulta
+}
+
 
 /**
  * Borra un vehículo por su ID
@@ -121,6 +168,9 @@ async function deleteVehicle(id) {
 module.exports = {
     getAllVehicles,
     getVehicleById,
+    getVehiclesByUser,
+    getFilteredVehicles,
+    updateVehicleState,
     createVehicle,
     updateVehicle,
     deleteVehicle

@@ -1,5 +1,5 @@
 {
-  "name": "usuariosmsauto",
+  "name": "ventasmsauto",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,10 +10,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "cors": "^2.8.5",
+    "axios": "^1.8.4",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
-    "mysql2": "^3.13.0",
+    "mysql2": "^3.14.0",
     "xpress": "^2.4.6"
   }
 }
