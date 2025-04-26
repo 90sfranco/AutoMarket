@@ -9,7 +9,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 // Obtener los vehículos publicados del usuario mediante cURL
 $sales = [];
 $userId = $_SESSION['id_usuario'] ?? 0;
-$url = VEHICLES_SERVICE_URL . '/when-user/' . $userId;
+$url = VEHICLES_QUERIES_SERVICE_URL . '/when-user/' . $userId;
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($ch);

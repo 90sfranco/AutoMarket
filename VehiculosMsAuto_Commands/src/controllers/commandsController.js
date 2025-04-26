@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const vehiculosModel = require('../models/vehiculosModel');
+const vehiculosModel = require('../models/commandsModel');
 
 
 // Crear un nuevo vehículo

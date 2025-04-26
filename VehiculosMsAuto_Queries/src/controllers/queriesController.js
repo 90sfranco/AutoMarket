@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const vehiculosModel = require('../models/vehiculosModel');
+const vehiculosModel = require('../models/queriesModel');
 
 
 // Obtener todos los vehículos
@@ -36,6 +36,17 @@ router.get('/vehiculos/when-user/:id', async (req, res) => {
         res.json(vehicles);
     } catch (error) {
         res.status(500).send("Error de servidor.");
+    }
+});
+
+// Obtener vehículos filtrados
+router.post('/vehiculos/get-filtered', async (req, res) => {
+    try {
+        const filters = req.body; // Se espera que tenga: marca, precio_inicial, precio_final (todos opcionales)
+        const vehicles = await vehiculosModel.getFilteredVehicles(filters);
+        res.json(vehicles);
+    } catch (error) {
+        res.status(500).send("Error de servidor: " + error.message);
     }
 });
 

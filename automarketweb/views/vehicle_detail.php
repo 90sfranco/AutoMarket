@@ -24,7 +24,7 @@ if (!isset($_SESSION['id_usuario'])) {
 
 
 // Construir la URL del microservicio de vehículos para obtener los detalles
-$url = VEHICLES_SERVICE_URL . '/' . $idVehiculo;
+$url = VEHICLES_QUERIES_SERVICE_URL . '/' . $idVehiculo;
 
 // Inicializar cURL
 $ch = curl_init($url);

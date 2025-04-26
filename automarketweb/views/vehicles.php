@@ -18,7 +18,7 @@ $data = json_encode([
 ]);
 
 // Usamos cURL para consumir el servicio filtrado.
-$url = VEHICLES_SERVICE_URL . '/get-filtered';
+$url = VEHICLES_QUERIES_SERVICE_URL . '/get-filtered';
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);

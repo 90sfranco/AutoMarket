@@ -13,7 +13,7 @@ if (!$idVehiculo) {
 }
 
 // Obtener información del vehículo desde el microservicio de vehículos
-$urlVehicle = VEHICLES_SERVICE_URL . '/' . $idVehiculo;
+$urlVehicle = VEHICLES_QUERIES_SERVICE_URL . '/' . $idVehiculo;
 $ch = curl_init($urlVehicle);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $responseVehicle = curl_exec($ch);

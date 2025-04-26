@@ -55,7 +55,7 @@ $data = [
 ];
 
 // Preparar la solicitud cURL para enviar la actualización (método PUT o PATCH)
-$url = VEHICLES_SERVICE_URL . '/edit/' . $idVehiculo;
+$url = VEHICLES_COMMANDS_SERVICE_URL . '/edit/' . $idVehiculo;
 $ch = curl_init($url);
 $jsonData = json_encode($data);
 
