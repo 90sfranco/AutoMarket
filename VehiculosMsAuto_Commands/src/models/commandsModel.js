@@ -108,8 +108,18 @@ async function deleteVehicle(id) {
     return result;
 }
 
+/**
+ * Obtiene un vehículo por su ID desde la BD de escritura
+ */
+async function getVehicleById(id) {
+    const result = await connection.query('SELECT * FROM vehiculo WHERE id_vehiculo = ?', [id]);
+    // connection.query devuelve un array [rows, fields]
+    // Devolvemos solo las filas (rows), que es un array de resultados
+    return result[0];
+}
 // Exporta las funciones para su uso en otros módulos
 module.exports = {
+    getVehicleById, // Añadido para que el controlador pueda verificar existencia
     updateVehicleState,
     createVehicle,
     updateVehicle,
