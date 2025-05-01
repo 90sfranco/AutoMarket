@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['condiciones_pago'])) 
         $error = "Debe ingresar las condiciones de pago.";
     } else {
         // Construir la URL del microservicio de contratos
-        $endpoint = "http://localhost:4003/contratos/create/{$idComprador}/{$idVehiculo}";
+        $endpoint = CONTRACTS_SERVICE_URL . "/create/{$idComprador}/{$idVehiculo}";
         
         // Preparar los datos a enviar en JSON
         $data = array(

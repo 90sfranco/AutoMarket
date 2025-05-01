@@ -96,7 +96,7 @@ if (!$vehiculo) {
                             <strong>Transmisión:</strong> 
                             <?php echo htmlspecialchars($vehiculo['transmision']); ?><br>
                             <strong>Tren de Tracción:</strong> 
-                            <?php echo htmlspecialchars($vehiculo['tren_traction']); ?><br>
+                            <?php echo htmlspecialchars(isset($vehiculo['tren_traction']) ? $vehiculo['tren_traction'] : ''); ?><br>
                             <strong>Color Interior:</strong> 
                             <?php echo htmlspecialchars($vehiculo['color_interior']); ?><br>
                             <strong>Color Exterior:</strong> 
@@ -132,7 +132,7 @@ if (!$vehiculo) {
 <div class="text-center">
     <?php if ($vehiculo['estado'] == 'disponible'): ?>
         <?php if ($vehiculo['id_usuario'] != $id_usuario): ?>
-            <a href="/automarketweb/views/contract.php?id=<?php echo $vehiculo['id_vehiculo']; ?>" class="btn btn-success">Comprar Vehículo</a>
+            <a href="./contract.php?id=<?php echo $vehiculo['id_vehiculo']; ?>" class="btn btn-success">Comprar Vehículo</a>
         <?php else: ?>
             <p class="text-success">Usted es el vendedor de este vehículo.</p>
         <?php endif; ?>

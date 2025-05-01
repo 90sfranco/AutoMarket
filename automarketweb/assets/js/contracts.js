@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function loadContracts() {
         try {
-            const response = await fetch(`/automarketweb/api/contratos_list.php`);
+            const response = await fetch(`../../api/contratos_list.php`);
             const contracts = await response.json();
             contractsContainer.innerHTML = "";
 
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </p>
                         </div>
                         <div class="card-footer text-center">
-                            <a href="/automarketweb/views/contract_detail.php?id=${contrato.id_contrato}" class="btn btn-primary">Ver Detalle</a>
+                            <a href="../../views/contract_detail.php?id=${contrato.id_contrato}" class="btn btn-primary">Ver Detalle</a>
                         </div>
                     </div>
                 `;

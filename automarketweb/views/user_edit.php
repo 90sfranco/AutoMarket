@@ -37,7 +37,7 @@ $userData = json_decode($response, true);
             echo "<div class='alert alert-success text-center'>" . htmlspecialchars($_GET['success']) . "</div>";
         }
         ?>
-        <form action="/automarketweb/api/user_edit_process.php?id=<?php echo $userId; ?>" method="POST">
+        <form action="../api/user_edit_process.php?id=<?php echo $userId; ?>" method="POST">
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre Completo</label>
                 <input type="text" id="nombre" name="nombre" class="form-control" required value="<?php echo htmlspecialchars($userData['nombre']); ?>">

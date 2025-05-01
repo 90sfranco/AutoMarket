@@ -8,4 +8,4 @@
 <?php include '../includes/footer.php'; ?>
 
 <!-- Cargar el script de contratos -->
-<script src="/automarketweb/assets/js/contracts.js"></script>
+<script src="../assets/js/contracts.js"></script>

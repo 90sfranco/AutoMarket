@@ -96,7 +96,7 @@ echo $alertHtml;
   <!-- Formulario para Publicar un Nuevo Vehículo -->
   <div class="col-md-6">
     <h2 class="mb-4">Publicar Nuevo Vehículo</h2>
-    <form method="POST" action="/automarketweb/api/vehicle_for_sale_process.php" class="card p-4 shadow-sm">
+    <form method="POST" action="../api/vehicle_for_sale_process.php" class="card p-4 shadow-sm">
       <!-- Campos del formulario (igual que antes) -->
       <div class="mb-3">
         <label for="marca" class="form-label">Marca</label>

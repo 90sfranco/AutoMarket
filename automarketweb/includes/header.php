@@ -29,8 +29,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
         <!-- Lado izquierdo: Logo y nombre de la aplicación -->
-        <a class="navbar-brand d-flex align-items-center" href="/automarketweb">
-          <img src="/automarketweb/assets/images/logo.png" alt="Logo" style="width: 5rem; height: auto; margin-right: 0.5rem;">
+        <a class="navbar-brand d-flex align-items-center" href="../">
+          <img src="../assets/images/logo.png" alt="Logo" style="width: 5rem; height: auto; margin-right: 0.5rem;">
           <span class="fs-3 text-white">AutoMarket</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,13 +40,13 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <div class="collapse navbar-collapse justify-content-end" id="navMenu">
           <ul class="navbar-nav align-items-center">
             <li class="nav-item">
-              <a class="nav-link text-white" href="/automarketweb/views/vehicles.php">Vehículos</a>
+              <a class="nav-link text-white" href="../views/vehicles.php">Vehículos</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="/automarketweb/views/contracts_history.php">Contratos</a>
+              <a class="nav-link text-white" href="../views/contracts_history.php">Contratos</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="/automarketweb/views/vehicle_sale.php">Ventas</a>
+              <a class="nav-link text-white" href="../views/vehicle_sale.php">Ventas</a>
             </li>
             <?php if (isset($_SESSION['id_usuario'])): ?>
               <!-- Dropdown para usuario autenticado -->
@@ -56,17 +56,17 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                   <i class="bi bi-person-circle fs-3" style="color: white;"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                  <li><a class="dropdown-item" href="/automarketweb/views/user_edit.php">Editar Perfil</a></li>
+                  <li><a class="dropdown-item" href="../views/user_edit.php">Editar Perfil</a></li>
                   <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="/automarketweb/api/logout.php">Cerrar Sesión</a></li>
+                  <li><a class="dropdown-item" href="../api/logout.php">Cerrar Sesión</a></li>
                 </ul>
               </li>
             <?php else: ?>
               <li class="nav-item">
-                <a class="nav-link text-white" href="/automarketweb/views/login.php">Login</a>
+                <a class="nav-link text-white" href="../views/login.php">Login</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" href="/automarketweb/views/register.php">Registro</a>
+                <a class="nav-link text-white" href="../views/register.php">Registro</a>
               </li>
             <?php endif; ?>
           </ul>

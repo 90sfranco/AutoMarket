@@ -82,7 +82,7 @@ if ($_SESSION['id_usuario'] == $contrato['id_vendedor']) :
 ?>
     <div class="text-center mt-3">
         <form method="POST">
-            <button type="submit" class="btn btn-success" formaction="/automarketweb/api/contract_signing_process.php?id=<?php echo $idContrato; ?>">Firmar Contrato</button>
+            <button type="submit" class="btn btn-success" formaction="../api/contract_signing_process.php?id=<?php echo $idContrato; ?>">Firmar Contrato</button>
             <input type="hidden" name="estado_contrato" value="completado">
 
         </form>
@@ -95,7 +95,7 @@ if ($_SESSION['id_usuario'] != $contrato['id_vendedor'] && $contrato['estado_con
 ?>
     <div class="text-center mt-3">
         <form method="POST">
-            <button type="submit" class="btn btn-success" formaction="/automarketweb/api/sale_vehicle_process.php?id=<?php echo $idContrato; ?>">Realizar pago</button>
+            <button type="submit" class="btn btn-success" formaction="../api/sale_vehicle_process.php?id=<?php echo $idContrato; ?>">Realizar pago</button>
             <input type="hidden" name="estado_vehiculo" value="vendido">
         </form>
     </div>

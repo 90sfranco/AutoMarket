@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validar que todos los campos están llenos
     if (empty($nombre) || empty($email) || empty($identificacion) || empty($telefono) || empty($direccion) || empty($usuario) || empty($password)) {
-        header("Location: /automarketweb/views/user_edit.php?error=" . urlencode("Todos los campos son obligatorios."));
+        header("Location: /views/user_edit.php?error=" . urlencode("Todos los campos son obligatorios."));
         exit();
     }
 
@@ -52,17 +52,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_close($ch);
 
     if (isset($error_msg)) {
-        header("Location: /automarketweb/views/user_edit.php?error=" . urlencode("Error al actualizar: " . $error_msg));
+        header("Location: /views/user_edit.php?error=" . urlencode("Error al actualizar: " . $error_msg));
         exit();
     } elseif ($httpCode !== 200) {
-        header("Location: /automarketweb/views/user_edit.php?error=" . urlencode("Error al actualizar: " . $response));
+        header("Location: /views/user_edit.php?error=" . urlencode("Error al actualizar: " . $response));
         exit();
     } else {
-        header("Location: /automarketweb/views/vehicles.php?success=" . urlencode("Perfil actualizado con éxito."));
+        header("Location: /views/vehicles.php?success=" . urlencode("Perfil actualizado con éxito."));
         exit();
     }
 } else {
-    header("Location: /automarketweb/views/user_edit.php");
+    header("Location: /views/user_edit.php");
     exit();
 }
 ?>

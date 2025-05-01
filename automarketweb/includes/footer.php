@@ -5,6 +5,6 @@
     <!-- Bootstrap Bundle con Popper (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- JS personalizado -->
-    <script src="/automarketweb/assets/js/main.js"></script>
-</body>
+    <script src="../assets/js/main.js"></script>
+ </body>
 </html>
