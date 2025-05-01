@@ -9,6 +9,6 @@ app.use(express.json());
 app.use(commandsController);
 
 
-app.listen(4005, () => {
-  console.log('Microservicio "Vehiculos - Comandos" ejecutándose en el puerto 4005');
+app.listen(process.env.PORT || 4006, () => {
+  console.log(`Microservicio Usuarios ejecutándose en el puerto ${process.env.PORT}`);
 });

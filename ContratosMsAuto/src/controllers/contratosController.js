@@ -4,8 +4,8 @@ const axios = require('axios');
 const contratosModel = require('../models/contratosModel');
 
 // URL base de los microservicios de Usuarios y Vehículos (ajusta según tu entorno)
-const USERS_SERVICE_URL = 'http://localhost:4001/usuarios';
-const VEHICLES_SERVICE_URL = 'http://localhost:4006/vehiculos';
+const USERS_SERVICE_URL = 'http://usuarios-ms:4001/usuarios';
+const VEHICLES_SERVICE_URL = 'http://vehiculos-ms:4006/vehiculos';
 
 // Obtener todos los contratos
 router.get('/contratos/all', async (req, res) => {

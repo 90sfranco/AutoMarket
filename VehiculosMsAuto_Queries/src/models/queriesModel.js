@@ -1,7 +1,7 @@
 const { MongoClient, ObjectId } = require('mongodb');
 
 // URI de conexión y configuración de la base de datos
-const uri = 'mongodb://localhost:27017/'; // Conectar al servidor, la BD se especifica después
+const uri = 'mongodb://mongo:27017/'; // Conectar al servidor, la BD se especifica después
 const dbName = 'VehiculosDBAuto_Read';
 const collectionName = 'vehiculo';
 
@@ -13,7 +13,7 @@ async function connectDB() {
         return collection;
     }
     try {
-        const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        const client = new MongoClient(uri);
         await client.connect();
         console.log("Conectado exitosamente a MongoDB");
         const db = client.db(dbName);

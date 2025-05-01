@@ -1,12 +1,12 @@
 const mysql = require('mysql2/promise');
 
 
-const connection = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    port: '3306',  //puerto establecido para sql
-    database: 'VehiculosDBAuto'
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || 'vehiculos-commands-db',
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'root',
+  database: process.env.DB_NAME || 'VehiculosDBAuto_Write'
 });
 
 
@@ -39,7 +39,7 @@ async function createVehicle(
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const result = await connection.query(query, [
+    const result = await pool.query(query, [
         marca, anio, modelo, kilometraje, tipoCarroceria, numCilindros,
         transmision, trenTraction, colorInterior, colorExterior,
         numPasajeros, numPuertas, tipoCombustible, precio, estado, idUsuario
@@ -80,7 +80,7 @@ async function updateVehicle(
             precio = ?, estado = ?, id_usuario = ?
         WHERE id_vehiculo = ?
     `;
-    const [result] = await connection.query(query, [
+    const [result] = await pool.query(query, [
         marca, anio, modelo, kilometraje, tipoCarroceria, numCilindros,
         transmision, trenTraction, colorInterior, colorExterior,
         numPasajeros, numPuertas, tipoCombustible, precio, estado, idUsuario,
@@ -95,7 +95,7 @@ async function updateVehicleState(id, estado) {
         SET estado = ?
         WHERE id_vehiculo = ?;
     `;
-    const [result] = await connection.execute(query, [estado, id]);
+    const [result] = await pool.execute(query, [estado, id]);
     return result;  // Retorna el resultado de la consulta
 }
 
@@ -104,7 +104,7 @@ async function updateVehicleState(id, estado) {
  * Borra un vehículo por su ID
  */
 async function deleteVehicle(id) {
-    const [result] = await connection.query('DELETE FROM vehiculo WHERE id_vehiculo = ?', [id]);
+    const [result] = await pool.query('DELETE FROM vehiculo WHERE id_vehiculo = ?', [id]);
     return result;
 }
 
@@ -112,8 +112,8 @@ async function deleteVehicle(id) {
  * Obtiene un vehículo por su ID desde la BD de escritura
  */
 async function getVehicleById(id) {
-    const result = await connection.query('SELECT * FROM vehiculo WHERE id_vehiculo = ?', [id]);
-    // connection.query devuelve un array [rows, fields]
+    const result = await pool.query('SELECT * FROM vehiculo WHERE id_vehiculo = ?', [id]);
+    // pool.query devuelve un array [rows, fields]
     // Devolvemos solo las filas (rows), que es un array de resultados
     return result[0];
 }

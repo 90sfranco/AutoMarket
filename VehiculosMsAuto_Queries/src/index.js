@@ -9,6 +9,6 @@ app.use(express.json());
 app.use(queriesController);
 
 
-app.listen(4006, () => {
-  console.log('Microservicio "Vehiculos - Consultas" ejecutándose en el puerto 4006');
+app.listen(process.env.PORT || 4005, () => {
+  console.log(`Microservicio "Vehiculos - Consultas" ejecutándose en el puerto ${process.env.PORT}`);
 });

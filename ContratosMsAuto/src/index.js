@@ -9,6 +9,6 @@ app.use(express.json());
 app.use(contratosController);
 
 
-app.listen(4003, () => {
-  console.log('Microservicio de contratos escuchando en el puerto 4003');
+app.listen(process.env.PORT || 4003, () => {
+  console.log(`Microservicio de contratos escuchando en el puerto ${process.env.PORT}`);
 });

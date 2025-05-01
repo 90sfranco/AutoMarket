@@ -2,11 +2,11 @@ const mysql = require('mysql2/promise');
 
 // Pool de conexión a la base de datos VentasDBAuto
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    port: '3306',
-    database: 'VentasDBAuto'
+    host: process.env.DB_HOST || 'ventas-db',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'root',
+    database: process.env.DB_NAME || 'VentasDBAuto'
 });
 
 
