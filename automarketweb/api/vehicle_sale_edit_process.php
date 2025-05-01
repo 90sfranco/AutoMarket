@@ -36,6 +36,7 @@ if ($idVehiculo <= 0 || $idUsuario <= 0 || empty($marca)) {
 
 // Construir el arreglo de datos (sin campo "estado")
 $data = [
+    '_id'              => ['id_vehiculo' => $idVehiculo],
     'marca'            => $marca,
     'anio'             => $anio,
     'modelo'           => $modelo,
@@ -50,12 +51,12 @@ $data = [
     'numPuertas'       => $numPuertas,
     'tipoCombustible'  => $tipoCombustible,
     'estado'           => $estado,
-    'precio'           => $precio,
+    'precio'           => "Decimal128('" . $precio . "')",
     'idUsuario'        => $idUsuario
 ];
 
 // Preparar la solicitud cURL para enviar la actualización (método PUT o PATCH)
-$url = VEHICLES_COMMANDS_SERVICE_URL . '/edit/' . $idVehiculo;
+$url = VEHICLES_COMMANDS_SERVICE_URL . '/edit';
 $ch = curl_init($url);
 $jsonData = json_encode($data);
 

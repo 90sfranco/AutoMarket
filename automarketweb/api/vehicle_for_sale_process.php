@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'numPasajeros'      => (int)$_POST['num_pasajeros'],
         'numPuertas'        => (int)$_POST['num_puertas'],
         'tipoCombustible'   => trim($_POST['tipo_combustible']),
-        'precio'            => (float)$_POST['precio'],
+        'precio'            => "Decimal128('" . $_POST['precio'] . "')",
         'estado'            => trim($_POST['estado']),
         'idUsuario'         => (int)($_POST['id_usuario'] ?? 0)
     ];
