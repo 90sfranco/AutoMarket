@@ -1,0 +1,20 @@
+{
+    "name": "mongo-sink-connector",
+    "config": {
+      "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+      "connection.uri": "mongodb://vehiculos-queries-db:27017",
+      "database": "vehiculosdbauto_read",
+      "collection": "vehiculo",
+      "topics": "vehiculosprefix.vehiculosdbauto_write.vehiculo",
+      "change.data.capture.handler": "com.mongodb.kafka.connect.sink.cdc.debezium.rdbms.mysql.MysqlHandler",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter.schemas.enable": "true",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter.schemas.enable": "true",
+      "errors.log.enable": "true",
+      "errors.tolerance": "all",
+      "errors.log.include.messages": "true"
+  
+    }
+  }
+  
