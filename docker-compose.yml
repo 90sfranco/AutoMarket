@@ -151,7 +151,7 @@ services:
       CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_PLUGIN_PATH: "/kafka/connect,/opt/kafka/plugins"
     volumes:
-      - ./VehiculosMsAuto_Queries/kafka-connect-plugins:/opt/kafka/plugins
+      - ./VehiculosMsAuto_Queries/kafka-connect:/opt/kafka/plugins
     depends_on:
       - zookeeper
       - kafka
@@ -172,6 +172,27 @@ services:
     depends_on:
       - kafka
       - kafka-connect
+    networks:
+      - microservices-net
+
+  init-connectors:
+    image: curlimages/curl
+    container_name: init-kafka-connectors
+    depends_on:
+      - kafka-connect
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "
+      echo 'Esperando a Kafka Connect...' &&
+      until curl -s http://kafka-connect:8083/connectors; do sleep 5; done &&
+      sleep 10 && \
+      echo 'Registrando conector MySQL...' &&
+      curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data @/opt/kafka/configs/mysql-connector.json http://kafka-connect:8083/connectors &&
+      echo 'Registrando conector Mongo Sink...' &&
+      curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data @/opt/kafka/configs/mongo-sink-connector.json http://kafka-connect:8083/connectors
+      "
+    volumes:
+      - ./VehiculosMsAuto_Queries/kafka-connect:/opt/kafka/configs
     networks:
       - microservices-net
 
