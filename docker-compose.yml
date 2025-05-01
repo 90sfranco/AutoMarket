@@ -1,29 +1,10 @@
 services:
-  vehiculos-commands-db:
-    image: mysql:8.0.36
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_SECURE_FILE_PRIV: ""
-    command:
-      --secure-file-priv=/tmp/
-      --server-id=223344
-      --log-bin=mysql-bin
-      --binlog-format=ROW
-      --gtid-mode=ON
-      --enforce-gtid-consistency=TRUE
-    volumes:
-      - ./VehiculosMsAuto_Commands/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - microservices-net
-
-  contratos-db:
-    image: mysql:8.0.36
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    networks:
-      - microservices-net
-    volumes:
-      - ./ContratosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql 
+ 
+  usuarios-ms:
+    build: ./UsuariosMsAuto
+    ports: ["3000:4001"]
+    depends_on: [usuarios-db]
+    networks: [microservices-net]
 
   usuarios-db:
     image: mysql:8.0.36
@@ -34,16 +15,7 @@ services:
     volumes:
       - ./UsuariosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql 
 
-  ventas-db:
-    image: mysql:8.0.36
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    networks:
-      - microservices-net
-    volumes:
-      - ./VentasMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  mongo:
+  vehiculos-queries-db:
     image: mongo:7.0.5
     ports:
       - "27017:27017"
@@ -51,8 +23,14 @@ services:
       MONGO_INITDB_DATABASE: vehiculosdbauto_read
     networks:
       - microservices-net
+  
+  vehiculos-queries-ms:
+    build: ./VehiculosMsAuto_Queries
+    ports: ["3001:4005"]
+    depends_on: [vehiculos-queries-db]
+    networks: [microservices-net]
 
-  vehiculos-commands:
+  vehiculos-commands-ms:
     build:
       context: ./VehiculosMsAuto_Commands
       dockerfile: Dockerfile
@@ -70,18 +48,38 @@ services:
       - kafka
     networks:
       - microservices-net
-      
+
+  vehiculos-commands-db:
+      image: mysql:8.0.36
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_SECURE_FILE_PRIV: ""
+      command:
+        --secure-file-priv=/tmp/
+        --server-id=223344
+        --log-bin=mysql-bin
+        --binlog-format=ROW
+        --gtid-mode=ON
+        --enforce-gtid-consistency=TRUE
+      volumes:
+        - ./VehiculosMsAuto_Commands/init.sql:/docker-entrypoint-initdb.d/init.sql
+      networks:
+        - microservices-net
+
   contratos-ms:
     build: ./ContratosMsAuto
     ports: ["3003:4003"]
     depends_on: [contratos-db]
     networks: [microservices-net]
 
-  usuarios-ms:
-    build: ./UsuariosMsAuto
-    ports: ["3000:4001"]
-    depends_on: [usuarios-db]
-    networks: [microservices-net]
+  contratos-db:
+      image: mysql:8.0.36
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+      networks:
+        - microservices-net
+      volumes:
+        - ./ContratosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql 
 
   ventas-ms:
     build: ./VentasMsAuto
@@ -89,11 +87,15 @@ services:
     depends_on: [ventas-db]
     networks: [microservices-net]
 
-  vehiculos-queries:
-    build: ./VehiculosMsAuto_Queries
-    ports: ["3001:4005"] # Mapeo corregido al puerto interno 4006
-    depends_on: [mongo]
-    networks: [microservices-net]
+  ventas-db:
+    image: mysql:8.0.36
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - microservices-net
+    volumes:
+      - ./VentasMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
+
 
   automarketweb:
     build:
@@ -147,6 +149,9 @@ services:
       VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_PLUGIN_PATH: "/kafka/connect,/opt/kafka/plugins"
+    volumes:
+      - ./VehiculosMsAuto_Queries/kafka-connect-plugins:/opt/kafka/plugins
     depends_on:
       - zookeeper
       - kafka

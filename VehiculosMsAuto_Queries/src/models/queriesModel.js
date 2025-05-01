@@ -1,8 +1,8 @@
 const { MongoClient, ObjectId } = require('mongodb');
 
 // URI de conexión y configuración de la base de datos
-const uri = 'mongodb://mongo:27017/'; // Conectar al servidor, la BD se especifica después
-const dbName = 'VehiculosDBAuto_Read';
+const uri = 'mongodb://vehiculos-queries-db:27017/'; // Conectar al servidor, la BD se especifica después
+const dbName = 'vehiculosdbauto_read';
 const collectionName = 'vehiculo';
 
 let collection;
