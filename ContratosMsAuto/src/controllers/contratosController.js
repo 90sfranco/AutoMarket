@@ -5,7 +5,7 @@ const contratosModel = require('../models/contratosModel');
 
 // URL base de los microservicios de Usuarios y Vehículos (ajusta según tu entorno)
 const USERS_SERVICE_URL = 'http://usuarios-ms:4001/usuarios';
-const VEHICLES_SERVICE_URL = 'http://vehiculos-ms:4006/vehiculos';
+const VEHICLES_SERVICE_URL = 'http://vehiculos-queries-ms:4005/vehiculos';
 
 // Obtener todos los contratos
 router.get('/contratos/all', async (req, res) => {
@@ -69,7 +69,7 @@ router.post('/contratos/create/:idUsuario/:idVehiculo', async (req, res) => {
         }
         const { condiciones_pago } = req.body;
 
-        // Obtener contratos por id_vehiculo
+        // Obtener contratos por id_vehiculo (para saber todos los contratos asociados a este vehículo)
         const contracts = await contratosModel.getContractsByVehicle(id_vehiculo); 
 
         if (contracts.some(contract => contract.estado_contrato.toLowerCase() === "completado")) {
