@@ -1,5 +1,4 @@
 services:
- 
   usuarios-ms:
     build: ./UsuariosMsAuto
     ports: ["3000:4001"]
@@ -13,6 +12,7 @@ services:
     networks:
       - microservices-net
     volumes:
+      - mysql-usuarios-data:/var/lib/mysql  # Persistencia de datos
       - ./UsuariosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql 
 
   vehiculos-queries-db:
@@ -23,7 +23,9 @@ services:
       MONGO_INITDB_DATABASE: vehiculosdbauto_read
     networks:
       - microservices-net
-  
+    volumes:
+      - mongo-vehiculos-data:/data/db  # Persistencia de datos MongoDB
+
   vehiculos-queries-ms:
     build: ./VehiculosMsAuto_Queries
     ports: ["3001:4005"]
@@ -35,7 +37,7 @@ services:
       context: ./VehiculosMsAuto_Commands
       dockerfile: Dockerfile
     ports:
-      - "3002:4006" 
+      - "3002:4006"
     environment:
       DB_HOST: vehiculos-commands-db
       DB_PORT: 3306
@@ -50,21 +52,22 @@ services:
       - microservices-net
 
   vehiculos-commands-db:
-      image: mysql:8.0.36
-      environment:
-        MYSQL_ROOT_PASSWORD: root
-        MYSQL_SECURE_FILE_PRIV: ""
-      command:
-        --secure-file-priv=/tmp/
-        --server-id=223344
-        --log-bin=mysql-bin
-        --binlog-format=ROW
-        --gtid-mode=ON
-        --enforce-gtid-consistency=TRUE
-      volumes:
-        - ./VehiculosMsAuto_Commands/init.sql:/docker-entrypoint-initdb.d/init.sql
-      networks:
-        - microservices-net
+    image: mysql:8.0.36
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_SECURE_FILE_PRIV: ""
+    command:
+      --secure-file-priv=/tmp/
+      --server-id=223344
+      --log-bin=mysql-bin
+      --binlog-format=ROW
+      --gtid-mode=ON
+      --enforce-gtid-consistency=TRUE
+    volumes:
+      - mysql-vehiculos-data:/var/lib/mysql  # Persistencia de datos
+      - ./VehiculosMsAuto_Commands/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-net
 
   contratos-ms:
     build: ./ContratosMsAuto
@@ -73,13 +76,14 @@ services:
     networks: [microservices-net]
 
   contratos-db:
-      image: mysql:8.0.36
-      environment:
-        MYSQL_ROOT_PASSWORD: root
-      networks:
-        - microservices-net
-      volumes:
-        - ./ContratosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql 
+    image: mysql:8.0.36
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - microservices-net
+    volumes:
+      - mysql-contratos-data:/var/lib/mysql  # Persistencia de datos
+      - ./ContratosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   ventas-ms:
     build: ./VentasMsAuto
@@ -94,8 +98,8 @@ services:
     networks:
       - microservices-net
     volumes:
+      - mysql-ventas-data:/var/lib/mysql  # Persistencia de datos
       - ./VentasMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
-
 
   automarketweb:
     build:
@@ -137,7 +141,7 @@ services:
     container_name: kafka-connect
     image: debezium/connect:2.7.3.Final
     ports:
-      - "8083:8083"  # Puerto para la API de conectores
+      - "8083:8083"
     environment:
       GROUP_ID: 1
       ADVERTISED_HOST_NAME: kafka-connect
@@ -199,3 +203,10 @@ services:
 networks:
   microservices-net:
     driver: bridge
+
+volumes:
+  mysql-usuarios-data:  # Volumen persistente para la base de datos de usuarios
+  mysql-vehiculos-data:  # Volumen persistente para la base de datos de vehículos
+  mysql-contratos-data:  # Volumen persistente para la base de datos de contratos
+  mysql-ventas-data:  # Volumen persistente para la base de datos de ventas
+  mongo-vehiculos-data:  # Volumen persistente para MongoDB
