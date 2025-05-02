@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "Error al procesar pago: " . $response;
         $alertClass = "alert-danger";
     } else {
-        $message = "El pago se realizó con éxito.";
+        $message = "💸 Éxito al procesar el pago";
         $alertClass = "alert-success";
     }
 } else {

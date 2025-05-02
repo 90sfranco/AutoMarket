@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS contrato (
     vehiculo_num_puertas INT NOT NULL,
     vehiculo_tipo_combustible VARCHAR(50) NOT NULL,
     vehiculo_precio DECIMAL(10,2) NOT NULL,
-
+    vehiculo_estado VARCHAR(20) NOT NULL,
+    
     -- Contrato
     condiciones_pago TEXT NOT NULL,
     comision_fija DECIMAL(10,2) NOT NULL,

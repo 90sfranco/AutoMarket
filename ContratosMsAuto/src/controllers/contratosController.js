@@ -106,7 +106,7 @@ router.post('/contratos/create/:idUsuario/:idVehiculo', async (req, res) => {
         // Verificar si ya existe un contrato para este comprador, vendedor y vehículo
         const count = await contratosModel.countContracts(comprador.id, vendedor.id, id_vehiculo);
         if (count > 0) {            
-            return res.status(400).send("Ya existe un contrato vinculado con este vehículo.");
+            return res.status(400).send("Ya tienes un contrato en proceso con este vehículo.");
         }
         
         // Crear el contrato utilizando la información obtenida
@@ -115,7 +115,7 @@ router.post('/contratos/create/:idUsuario/:idVehiculo', async (req, res) => {
             vendedor.nombre, vendedor.email, vendedor.identificacion, vendedor.id,
             id_vehiculo, vehiculo.marca, vehiculo.anio, vehiculo.modelo, vehiculo.kilometraje, vehiculo.tipo_carroceria,
             vehiculo.num_cilindros, vehiculo.transmision, vehiculo.tren_traction, vehiculo.color_interior, vehiculo.color_exterior,
-            vehiculo.num_pasajeros, vehiculo.num_puertas, vehiculo.tipo_combustible, vehiculo.precio,
+            vehiculo.num_pasajeros, vehiculo.num_puertas, vehiculo.tipo_combustible, vehiculo.precio, vehiculo.estado,
             condiciones_pago, COMISION_FIJA, ESTADO_CONTRATO
         );
         

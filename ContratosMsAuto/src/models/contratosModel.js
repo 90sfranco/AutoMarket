@@ -51,7 +51,7 @@ async function createContract(
     vendedor_nombre, vendedor_email, vendedor_identificacion, id_vendedor,
     id_vehiculo, vehiculo_marca, vehiculo_anio, vehiculo_modelo, vehiculo_kilometraje, vehiculo_tipo_carroceria,
     vehiculo_num_cilindros, vehiculo_transmision, vehiculo_tren_traction, vehiculo_color_interior, vehiculo_color_exterior,
-    vehiculo_num_pasajeros, vehiculo_num_puertas, vehiculo_tipo_combustible, vehiculo_precio,
+    vehiculo_num_pasajeros, vehiculo_num_puertas, vehiculo_tipo_combustible, vehiculo_precio, vehiculo_estado,
     condiciones_pago, comision_fija, estado_contrato
 ) {
     const query = `
@@ -60,17 +60,17 @@ async function createContract(
             vendedor_nombre, vendedor_email, vendedor_identificacion, id_vendedor,
             id_vehiculo, vehiculo_marca, vehiculo_anio, vehiculo_modelo, vehiculo_kilometraje, vehiculo_tipo_carroceria,
             vehiculo_num_cilindros, vehiculo_transmision, vehiculo_tren_traction, vehiculo_color_interior, vehiculo_color_exterior,
-            vehiculo_num_pasajeros, vehiculo_num_puertas, vehiculo_tipo_combustible, vehiculo_precio,
+            vehiculo_num_pasajeros, vehiculo_num_puertas, vehiculo_tipo_combustible, vehiculo_precio, vehiculo_estado,
             condiciones_pago, comision_fija, estado_contrato
         )
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `;
     const values = [
         comprador_nombre, comprador_email, comprador_identificacion, id_comprador,
         vendedor_nombre, vendedor_email, vendedor_identificacion, id_vendedor,
         id_vehiculo, vehiculo_marca, vehiculo_anio, vehiculo_modelo, vehiculo_kilometraje, vehiculo_tipo_carroceria,
         vehiculo_num_cilindros, vehiculo_transmision, vehiculo_tren_traction, vehiculo_color_interior, vehiculo_color_exterior,
-        vehiculo_num_pasajeros, vehiculo_num_puertas, vehiculo_tipo_combustible, vehiculo_precio,
+        vehiculo_num_pasajeros, vehiculo_num_puertas, vehiculo_tipo_combustible, vehiculo_precio, vehiculo_estado,
         condiciones_pago, comision_fija, estado_contrato
     ];
     const result = await pool.query(query, values);
