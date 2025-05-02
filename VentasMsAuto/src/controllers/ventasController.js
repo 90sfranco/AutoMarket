@@ -4,9 +4,9 @@ const router = Router();
 const ventasModel = require('../models/ventasModel');
 
 // URL base de los microservicios
-const BASE_URL_VEHICULOS_QUERIES  = 'http://localhost:4006/vehiculos'; // Para consultas
-const BASE_URL_VEHICULOS_COMMANDS = 'http://localhost:4005/vehiculos'; // Para comandos (actualizar estado)
-const BASE_URL_CONTRATOS = 'http://localhost:4003/contratos';
+const BASE_URL_VEHICULOS_QUERIES  = 'http://vehiculos-queries-ms:4005/vehiculos';  // Para consultas
+const BASE_URL_VEHICULOS_COMMANDS = 'http://vehiculos-commands-ms:4006/vehiculos'; // Para comandos (actualizar estado)
+const BASE_URL_CONTRATOS = 'http://contratos-ms:4003/contratos';
 
 /**
  * GET /ventas
