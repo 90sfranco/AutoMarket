@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validar que todos los campos están llenos
     if (empty($nombre) || empty($email) || empty($identificacion) || empty($telefono) || empty($direccion) || empty($usuario) || empty($password)) {
-        header("Location: /views/user_edit.php?error=" . urlencode("Todos los campos son obligatorios."));
+        $_SESSION['error'] = "Todos los campos son obligatorios.";
+        header("Location: /views/user_edit.php");
         exit();
     }
 
@@ -52,13 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_close($ch);
 
     if (isset($error_msg)) {
-        header("Location: /views/user_edit.php?error=" . urlencode("Error al actualizar: " . $error_msg));
+        $_SESSION['error'] = "Error al actualizar: " . $error_msg;
+        header("Location: /views/user_edit.php");
         exit();
     } elseif ($httpCode !== 200) {
-        header("Location: /views/user_edit.php?error=" . urlencode("Error al actualizar: " . $response));
+        $_SESSION['error'] = "Error al actualizar: " . $response;
+        header("Location: /views/user_edit.php");
         exit();
     } else {
-        header("Location: /views/vehicles.php?success=" . urlencode("Perfil actualizado con éxito."));
+        $_SESSION['success'] = "Perfil actualizado con éxito.";
+        header("Location: /views/vehicles.php");
         exit();
     }
 } else {

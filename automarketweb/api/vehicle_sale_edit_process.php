@@ -51,12 +51,12 @@ $data = [
     'numPuertas'       => $numPuertas,
     'tipoCombustible'  => $tipoCombustible,
     'estado'           => $estado,
-    'precio'           => "Decimal128('" . $precio . "')",
+    'precio'           => $precio,
     'idUsuario'        => $idUsuario
 ];
 
 // Preparar la solicitud cURL para enviar la actualización (método PUT o PATCH)
-$url = VEHICLES_COMMANDS_SERVICE_URL . '/edit';
+$url = VEHICLES_COMMANDS_SERVICE_URL . '/edit/' . $idVehiculo; // Endpoint en commandsController.js
 $ch = curl_init($url);
 $jsonData = json_encode($data);
 

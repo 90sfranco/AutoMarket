@@ -94,6 +94,7 @@ echo $alertHtml;
   </div>
 
   <!-- Formulario para Publicar un Nuevo Vehículo -->
+
   <div class="col-md-6">
     <h2 class="mb-4">Publicar Nuevo Vehículo</h2>
     <form method="POST" action="../api/vehicle_for_sale_process.php" class="card p-4 shadow-sm">
@@ -164,29 +165,36 @@ echo $alertHtml;
 <!-- Script para SweetAlert2 (CDN) -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Script para el mensaje de alerta -->
+<!-- Script para el mensaje de alerta y refresco -->
 <script>
   window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function(){
       var alertContainer = document.getElementById('alert-container');
-      
       if (alertContainer) {
+        // Determinar si es un mensaje de éxito
+        var isSuccess = alertContainer.classList.contains('alert-success');
+
         // Animación de desvanecimiento
         alertContainer.style.transition = "opacity 0.5s ease-out";
         alertContainer.style.opacity = "0";
-        
+
         // Eliminar el mensaje después de la animación
         setTimeout(function(){ 
-          alertContainer.remove(); 
-          
+          alertContainer.remove();
+
           // Limpiar el parámetro 'msg' de la URL sin recargar
           if (window.location.search.includes('msg=')) {
             var newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
           }
+
+          // Si era un mensaje de éxito, recargar la página para reflejar cambios
+          if (isSuccess) {
+            window.location.reload();
+          }
         }, 500);
       }
-    }, 3000); // Tiempo antes de ocultar (3 segundos)
+    }, 2000); // Tiempo antes de ocultar (2 segundos)
   });
 
   // Interceptar click en los enlaces de eliminación

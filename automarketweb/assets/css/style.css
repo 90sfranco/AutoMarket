@@ -6,12 +6,20 @@ body {
     color: #333;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Asegura que el body ocupe al menos el 100% de la altura */
 }
 
 /* Contenedores flexibles */
 .container {
     max-width: 95%;
     margin: 0 auto;
+}
+
+/* Contenedor para el contenido */
+#content {
+    flex-grow: 1; /* Hace que el contenido ocupe el espacio restante */
 }
 
 /* Encabezado y navegación */
@@ -42,8 +50,41 @@ form .form-label {
     font-size: 1rem;
 }
 
-@media (max-width: 768px) {
-    .navbar-brand span {
-        font-size: clamp(1rem, 2vw, 1.5rem);
-    }
+/* Footer siempre al fondo */
+footer {
+    margin-top: auto; /* Empuja el footer al final */
+    background-color: #f8f9fa;
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Aseguramos que el mensaje de alerta esté centrado */
+#noContractsMessage {
+    margin-top: 50px; /* Distancia desde el título */
+    width: 30%; /* Ancho del 30% de la pantalla */
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+/* Contenedor para las tarjetas de contratos, con estilo flexbox */
+#contractsContainer {
+    display: flex; /* Usamos flexbox para las tarjetas */
+    flex-wrap: wrap; /* Las tarjetas se envuelven en varias filas */
+    justify-content: flex-start; /* Las tarjetas se alinean de izquierda a derecha */
+    gap: 20px; /* Espacio entre las tarjetas */
+}
+
+/* Estilos de las tarjetas */
+.card {
+    width: 100%; /* Las tarjetas ocupan el 100% de su contenedor */
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    margin-bottom: 1rem;
+}
+
+/* Aseguramos que el mensaje de alerta dentro del contenedor de tarjetas tenga el estilo adecuado */
+#contractsContainer .alert {
+    margin-top: 30px; /* Se aleja un poco del título */
+    width: 40%;
+    text-align: center;
 }

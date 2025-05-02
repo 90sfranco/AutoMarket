@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const contractsContainer = document.getElementById('contractsContainer');
+    const noContractsMessage = document.getElementById('noContractsMessage');
 
     async function loadContracts() {
         try {
@@ -8,13 +9,19 @@ document.addEventListener('DOMContentLoaded', function() {
             contractsContainer.innerHTML = "";
 
             if (!Array.isArray(contracts) || contracts.length === 0) {
-                contractsContainer.innerHTML = `<div class="alert alert-info text-center">No se encontraron contratos.</div>`;
+                noContractsMessage.classList.remove('d-none'); // Mostrar mensaje
+                contractsContainer.classList.add('d-none'); // Ocultar contenedor de tarjetas
                 return;
             }
 
+            // Ocultar el mensaje si hay contratos
+            noContractsMessage.classList.add('d-none');
+            contractsContainer.classList.remove('d-none');
+
+            // Cuando hay contratos, mostrar las tarjetas
             contracts.forEach(contrato => {
                 const col = document.createElement('div');
-                col.className = 'col';
+                col.className = 'col'; // Este asegura que cada tarjeta esté en una columna
                 col.innerHTML = `
                     <div class="card h-100">
                         <div class="card-body">
