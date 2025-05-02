@@ -4,8 +4,8 @@ const axios = require('axios');
 const contratosModel = require('../models/contratosModel');
 
 // URL base de los microservicios de Usuarios y Vehículos (ajusta según tu entorno)
-const USERS_SERVICE_URL = 'http://localhost:4001/usuarios';
-const VEHICLES_SERVICE_URL = 'http://localhost:4002/vehiculos';
+const USERS_SERVICE_URL = 'http://usuarios-ms:4001/usuarios';
+const VEHICLES_SERVICE_URL = 'http://vehiculos-queries-ms:4005/vehiculos';
 
 // Obtener todos los contratos
 router.get('/contratos/all', async (req, res) => {
@@ -69,7 +69,7 @@ router.post('/contratos/create/:idUsuario/:idVehiculo', async (req, res) => {
         }
         const { condiciones_pago } = req.body;
 
-        // Obtener contratos por id_vehiculo
+        // Obtener contratos por id_vehiculo (para saber todos los contratos asociados a este vehículo)
         const contracts = await contratosModel.getContractsByVehicle(id_vehiculo); 
 
         if (contracts.some(contract => contract.estado_contrato.toLowerCase() === "completado")) {
@@ -106,7 +106,7 @@ router.post('/contratos/create/:idUsuario/:idVehiculo', async (req, res) => {
         // Verificar si ya existe un contrato para este comprador, vendedor y vehículo
         const count = await contratosModel.countContracts(comprador.id, vendedor.id, id_vehiculo);
         if (count > 0) {            
-            return res.status(400).send("Ya existe un contrato vinculado con este vehículo.");
+            return res.status(400).send("Ya tienes un contrato en proceso con este vehículo.");
         }
         
         // Crear el contrato utilizando la información obtenida
@@ -115,7 +115,7 @@ router.post('/contratos/create/:idUsuario/:idVehiculo', async (req, res) => {
             vendedor.nombre, vendedor.email, vendedor.identificacion, vendedor.id,
             id_vehiculo, vehiculo.marca, vehiculo.anio, vehiculo.modelo, vehiculo.kilometraje, vehiculo.tipo_carroceria,
             vehiculo.num_cilindros, vehiculo.transmision, vehiculo.tren_traction, vehiculo.color_interior, vehiculo.color_exterior,
-            vehiculo.num_pasajeros, vehiculo.num_puertas, vehiculo.tipo_combustible, vehiculo.precio,
+            vehiculo.num_pasajeros, vehiculo.num_puertas, vehiculo.tipo_combustible, vehiculo.precio, vehiculo.estado,
             condiciones_pago, COMISION_FIJA, ESTADO_CONTRATO
         );
         

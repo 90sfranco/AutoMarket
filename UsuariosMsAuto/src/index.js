@@ -17,6 +17,6 @@ app.use(cors({
 
 app.use(usuariosController);
 
-app.listen(4001, () => {
-  console.log('Microservicio Usuarios ejecutándose en el puerto 4001');
+app.listen(process.env.PORT || 4001, () => {
+  console.log(`Microservicio Usuarios ejecutándose en el puerto ${process.env.PORT}`);
 });

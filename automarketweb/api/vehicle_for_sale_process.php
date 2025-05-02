@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Configurar cURL para enviar los datos en formato JSON
-    $url = VEHICLES_SERVICE_URL . '/create';
+    $url = VEHICLES_COMMANDS_SERVICE_URL . '/create';
     $ch = curl_init($url);
     $jsonData = json_encode($data);
 

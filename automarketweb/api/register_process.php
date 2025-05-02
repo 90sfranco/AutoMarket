@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     // Si se accedió sin método POST, redirigir de inmediato
-    header("Location: /automarketweb/views/register.php");
+    header("Location: /views/register.php");
     exit();
 }
 ?>
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         // Redirige al login después de 2 segundos
         setTimeout(function(){
-            window.location.href = "/automarketweb/views/login.php";
+            window.location.href = "/views/login.php";
         }, 2000);
     </script>
 </div>

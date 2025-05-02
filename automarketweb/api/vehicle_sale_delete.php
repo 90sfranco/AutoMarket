@@ -11,7 +11,7 @@ if (!isset($_GET['id'])) {
 $vehicleId = (int)$_GET['id'];
 
 // Configurar cURL para enviar la solicitud DELETE
-$url = VEHICLES_SERVICE_URL . '/delete/' . $vehicleId;
+$url = VEHICLES_COMMANDS_SERVICE_URL . '/delete/' . $vehicleId;
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

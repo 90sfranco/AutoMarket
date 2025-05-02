@@ -30,14 +30,19 @@ $userData = json_decode($response, true);
 <div class="row justify-content-center">
     <div class="col-md-6">
         <?php
-        if (isset($_GET['error'])) {
-            echo "<div class='alert alert-danger text-center'>" . htmlspecialchars($_GET['error']) . "</div>";
+        // Mostrar mensaje de error si existe en la sesión
+        if (isset($_SESSION['error'])) {
+            echo "<div class='alert alert-danger text-center'>" . htmlspecialchars($_SESSION['error']) . "</div>";
+            unset($_SESSION['error']);  // Limpiar el mensaje después de mostrarlo
         }
-        if (isset($_GET['success'])) {
-            echo "<div class='alert alert-success text-center'>" . htmlspecialchars($_GET['success']) . "</div>";
+
+        // Mostrar mensaje de éxito si existe en la sesión
+        if (isset($_SESSION['success'])) {
+            echo "<div class='alert alert-success text-center'>" . htmlspecialchars($_SESSION['success']) . "</div>";
+            unset($_SESSION['success']);  // Limpiar el mensaje después de mostrarlo
         }
         ?>
-        <form action="/automarketweb/api/user_edit_process.php?id=<?php echo $userId; ?>" method="POST">
+        <form action="../api/user_edit_process.php?id=<?php echo $userId; ?>" method="POST">
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre Completo</label>
                 <input type="text" id="nombre" name="nombre" class="form-control" required value="<?php echo htmlspecialchars($userData['nombre']); ?>">

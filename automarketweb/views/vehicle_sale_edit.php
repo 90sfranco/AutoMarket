@@ -27,7 +27,7 @@ if (!isset($_GET['id'])) {
 }
 
 $vehicleId = (int)$_GET['id'];
-$url = VEHICLES_SERVICE_URL . '/' . $vehicleId;
+$url = VEHICLES_QUERIES_SERVICE_URL . '/' . $vehicleId;
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($ch);

@@ -51,19 +51,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['estado_contrato'])) {
 <div class="container my-5">
     <?php if (isset($success) && $success): ?>
         <div class="alert alert-success text-center" role="alert">
-            Se actualizó el estado del contrato.
+            Se firmó el contrato ✍️, ahora está completado y listo para procesar el pago 💸.
         </div>
         <script>
             setTimeout(function() {
-                window.location.href = "/automarketweb/views/contract_detail.php?id=<?php echo $idContrato; ?>";
-            }, 3000);
+                window.location.href = "../views/contract_detail.php?id=<?php echo $idContrato; ?>";
+            }, 3300); // 3.3 segundos
         </script>
     <?php else: ?>
         <div class="alert alert-danger text-center" role="alert">
-            <?php echo isset($error) ? $error : "Ocurrió un error."; ?>
+            <?php echo isset($error) ? $error : "Ocurrió un error inesperado, vuelve a intentarlo en un momento 🕒"; ?>
         </div>
         <div class="text-center">
-            <a href="/automarketweb/views/contract_detail.php?id=<?php echo $idContrato; ?>" class="btn btn-secondary">Volver</a>
+            <a href="../views/contract_detail.php?id=<?php echo $idContrato; ?>" class="btn btn-secondary">Volver</a>
         </div>
     <?php endif; ?>
 </div>

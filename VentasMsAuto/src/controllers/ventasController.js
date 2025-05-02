@@ -4,8 +4,9 @@ const router = Router();
 const ventasModel = require('../models/ventasModel');
 
 // URL base de los microservicios
-const BASE_URL_VEHICULOS  = 'http://localhost:4002/vehiculos';
-const BASE_URL_CONTRATOS = 'http://localhost:4003/contratos';
+const BASE_URL_VEHICULOS_QUERIES  = 'http://vehiculos-queries-ms:4005/vehiculos';  // Para consultas
+const BASE_URL_VEHICULOS_COMMANDS = 'http://vehiculos-commands-ms:4006/vehiculos'; // Para comandos (actualizar estado)
+const BASE_URL_CONTRATOS = 'http://contratos-ms:4003/contratos';
 
 /**
  * GET /ventas
@@ -131,7 +132,7 @@ router.post('/ventas/create', async (req, res) => {
         
         // Actualizar el estado del vehículo a "vendido" mediante el servicio correspondiente
         const idVehiculo = contrato.id_vehiculo;
-        await axios.patch(`${BASE_URL_VEHICULOS}/edit-status/${idVehiculo}`, {
+        await axios.patch(`${BASE_URL_VEHICULOS_COMMANDS}/edit-status/${idVehiculo}`, {
             estado: "vendido"
         });
         

@@ -1,0 +1,28 @@
+{
+    "name": "mysql-connector-automarket",
+    "config": {
+      "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+      "tasks.max": "1",
+      "database.hostname": "vehiculos-commands-db",
+      "database.port": "3306",
+      "database.user": "root",
+      "database.password": "root",
+      "database.server.id": "223344",
+      "topic.prefix": "vehiculosprefix",
+      "database.include.list": "vehiculosdbauto_write",
+      "table.include.list": "vehiculosdbauto_write.vehiculo",
+      "schema.history.internal.kafka.bootstrap.servers": "kafka-vehiculos:29092",
+      "schema.history.internal.kafka.topic": "schemahistory.automarketvehicles",
+      "include.schema.changes": "false",
+      "snapshot.mode": "initial",
+      "topic.creation.default.replication.factor": "1",
+      "topic.creation.default.partitions": "1",
+      "topic.creation.enable": "true",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter.schemas.enable": "true",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter.schemas.enable": "true"
+  
+    }
+  }
+  

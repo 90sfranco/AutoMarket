@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['condiciones_pago'])) 
         $error = "Debe ingresar las condiciones de pago.";
     } else {
         // Construir la URL del microservicio de contratos
-        $endpoint = "http://localhost:4003/contratos/create/{$idComprador}/{$idVehiculo}";
+        $endpoint = CONTRACTS_SERVICE_URL . "/create/{$idComprador}/{$idVehiculo}";
         
         // Preparar los datos a enviar en JSON
         $data = array(
@@ -64,9 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['condiciones_pago'])) 
             El contrato ha sido creado. Por favor, espere a que se complete el estado del contrato para seguir con la compra del vehículo.
         </div>
         <script>
-            // Redirige después de 10 segundos
+            // Redirige después de 4 segundos
             setTimeout(function(){
-                window.location.href = "/automarketweb/views/vehicles.php";
+                window.location.href = "../views/contracts_history.php";
             }, 4000);
         </script>
     <?php else: ?>
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['condiciones_pago'])) 
             <?php echo isset($error) ? $error : "Ocurrió un error."; ?>
         </div>
         <div class="text-center">
-            <a href="/automarketweb/views/vehicles.php", class="btn btn-secondary">Volver</a>
+            <a href="../views/vehicles.php", class="btn btn-secondary">Volver</a>
         </div>
     <?php endif; ?>
 </div>

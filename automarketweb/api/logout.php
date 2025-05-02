@@ -2,6 +2,6 @@
 session_start();
 session_unset();
 session_destroy();
-header("Location: /automarketweb/views/login.php");
+header("Location: /views/login.php");
 exit();
 ?>

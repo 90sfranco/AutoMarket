@@ -7,9 +7,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 // Obtener los vehículos publicados del usuario mediante cURL
-$sales = [];
+$vehiclesPublished = [];
 $userId = $_SESSION['id_usuario'] ?? 0;
-$url = VEHICLES_SERVICE_URL . '/when-user/' . $userId;
+$url = VEHICLES_QUERIES_SERVICE_URL . '/when-user/' . $userId;
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($ch);
@@ -17,7 +17,7 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($httpCode == 200) {
-    $sales = json_decode($response, true);
+    $vehiclesPublished = json_decode($response, true);
 }
 
 // Mostrar mensajes de feedback, si existen
@@ -44,46 +44,61 @@ if (isset($_GET['msg'])) {
 echo $alertHtml;
 ?>
 
-<!-- Resto del código para mostrar los vehículos y el formulario se mantiene sin cambios -->
+<!-- Mostrar los vehículos publicados -->
 
 <div class="row">
   <!-- Listado de Vehículos Publicados -->
   <div class="col-md-6">
     <h2 class="mb-4">Tus Vehículos Publicados</h2>
-    <?php if (!empty($sales)): ?>
-      <?php foreach ($sales as $sale): ?>
+    <?php if (!empty($vehiclesPublished)): ?>
+      <?php foreach ($vehiclesPublished as $vehicle): ?>
         <div class="card mb-3 shadow-sm">
           <div class="card-body d-flex justify-content-between align-items-center">
             <div>
-              <h5 class="card-title"><?php echo htmlspecialchars($sale['marca']); ?> <?php echo htmlspecialchars($sale['modelo']); ?></h5>
+              <h5 class="card-title"><?php echo htmlspecialchars($vehicle['marca']); ?> <?php echo htmlspecialchars($vehicle['modelo']); ?></h5>
               <p class="card-text">
-                <strong>Año:</strong> <?php echo htmlspecialchars($sale['anio']); ?><br>
-                <strong>Kilometraje:</strong> <?php echo htmlspecialchars($sale['kilometraje']); ?><br>
-                <strong>Precio:</strong> $<?php echo htmlspecialchars($sale['precio']); ?> <br>
-                <strong>Estado:</strong> <?php echo htmlspecialchars($sale['estado']); ?>
+                <strong>Año:</strong> <?php echo htmlspecialchars($vehicle['anio']); ?><br>
+                <strong>Kilometraje:</strong> <?php echo htmlspecialchars($vehicle['kilometraje']); ?><br>
+                <strong>Precio:</strong> $<?php echo htmlspecialchars($vehicle['precio']); ?> <br>
+                <strong>Estado:</strong> 
+                <?php
+                $estado = strtolower($vehicle['estado']); 
+                $colorClase = ($estado === 'vendido') ? 'bg-success' : 'bg-warning';
+                $textoEstado = ucfirst($vehicle['estado']);
+                ?>
+
+                <span class="badge <?php echo $colorClase; ?> rounded-pill">
+                    <?php echo htmlspecialchars($textoEstado); ?>
+                </span>
               </p>
             </div>
-            <!-- Íconos para Editar y Eliminar -->
+            
+            <!-- Íconos según estado -->
             <div class="d-flex flex-column align-items-center">
-              <!-- Editar -->
-              <a href="vehicle_sale_edit.php?id=<?php echo $sale['id_vehiculo']; ?>" class="mb-2" title="Editar">
-                  <i class="bi bi-pencil-square fs-4" 
+              <?php if ($vehicle['estado'] === 'disponible'): ?>
+                <!-- Editar -->
+                <a href="vehicle_sale_edit.php?id=<?php echo $vehicle['id_vehiculo']; ?>" class="mb-2" title="Editar">
+                  <i class="bi bi-pencil-square fs-4"
                      style="color: #343a40;"
-                     onmouseover="this.style.color='#add8e6'" 
+                     onmouseover="this.style.color='#add8e6'"
                      onmouseout="this.style.color='#343a40'">
                   </i>
-              </a>
-              <!-- Eliminar (sin confirm nativo) -->
-              <a href="#" 
-                 class="delete-vehicle" 
-                 data-href="../api/vehicle_sale_delete.php?id=<?php echo $sale['id_vehiculo']; ?>" 
-                 title="Eliminar">
-                  <i class="bi bi-trash fs-4" 
-                     style="color: #343a40;" 
-                     onmouseover="this.style.color='#f08080'" 
+                </a>
+                <!-- Eliminar -->
+                <a href="#"
+                   class="delete-vehicle"
+                   data-href="../api/vehicle_sale_delete.php?id=<?php echo $vehicle['id_vehiculo']; ?>"
+                   title="Eliminar">
+                  <i class="bi bi-trash fs-4"
+                     style="color: #343a40;"
+                     onmouseover="this.style.color='#f08080'"
                      onmouseout="this.style.color='#343a40'">
                   </i>
-              </a>
+                </a>
+              <?php else: ?>
+                <!-- Icono “Vendido” -->
+                <i class="bi bi-check2-square fs-4 text-success" title="Vendido"></i>
+              <?php endif; ?>
             </div>
           </div>
         </div>
@@ -94,9 +109,10 @@ echo $alertHtml;
   </div>
 
   <!-- Formulario para Publicar un Nuevo Vehículo -->
+
   <div class="col-md-6">
     <h2 class="mb-4">Publicar Nuevo Vehículo</h2>
-    <form method="POST" action="/automarketweb/api/vehicle_for_sale_process.php" class="card p-4 shadow-sm">
+    <form method="POST" action="../api/vehicle_for_sale_process.php" class="card p-4 shadow-sm">
       <!-- Campos del formulario (igual que antes) -->
       <div class="mb-3">
         <label for="marca" class="form-label">Marca</label>
@@ -154,7 +170,7 @@ echo $alertHtml;
         <label for="precio" class="form-label">Precio</label>
         <input type="number" step="0.01" class="form-control" id="precio" name="precio" required>
       </div>
-      <input type="hidden" name="estado"  value="disponible">
+      <input type="hidden" name="estado" value="disponible">
       <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?? 0; ?>">
       <button type="submit" class="btn btn-primary">Publicar Vehículo</button>
     </form>
@@ -164,29 +180,36 @@ echo $alertHtml;
 <!-- Script para SweetAlert2 (CDN) -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Script para el mensaje de alerta -->
+<!-- Script para el mensaje de alerta y refresco -->
 <script>
   window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function(){
       var alertContainer = document.getElementById('alert-container');
-      
       if (alertContainer) {
+        // Determinar si es un mensaje de éxito
+        var isSuccess = alertContainer.classList.contains('alert-success');
+
         // Animación de desvanecimiento
         alertContainer.style.transition = "opacity 0.5s ease-out";
         alertContainer.style.opacity = "0";
-        
+
         // Eliminar el mensaje después de la animación
         setTimeout(function(){ 
-          alertContainer.remove(); 
-          
+          alertContainer.remove();
+
           // Limpiar el parámetro 'msg' de la URL sin recargar
           if (window.location.search.includes('msg=')) {
             var newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
           }
+
+          // Si era un mensaje de éxito, recargar la página para reflejar cambios
+          if (isSuccess) {
+            window.location.reload();
+          }
         }, 500);
       }
-    }, 3000); // Tiempo antes de ocultar (3 segundos)
+    }, 2000); // Tiempo antes de ocultar (2 segundos)
   });
 
   // Interceptar click en los enlaces de eliminación

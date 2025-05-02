@@ -13,7 +13,7 @@ if (!$idVehiculo) {
 }
 
 // Obtener información del vehículo desde el microservicio de vehículos
-$urlVehicle = VEHICLES_SERVICE_URL . '/' . $idVehiculo;
+$urlVehicle = VEHICLES_QUERIES_SERVICE_URL . '/' . $idVehiculo;
 $ch = curl_init($urlVehicle);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $responseVehicle = curl_exec($ch);
@@ -110,7 +110,7 @@ if (!$vendedor) {
         </div>
         <hr>
         <!-- Formulario para ingresar condiciones de pago -->
-        <form action="/automarketweb/api/contract_process.php?id=<?php echo $vehiculo['id_vehiculo']; ?>" method="POST">
+        <form action="../api/contract_process.php?id=<?php echo $vehiculo['id_vehiculo']; ?>" method="POST">
             <div class="mb-3">
                 <label for="condiciones_pago" class="form-label">Condiciones de Pago</label>
                 <textarea id="condiciones_pago" name="condiciones_pago" class="form-control" rows="4" placeholder="Ej: Pago de contado mediante transferencia bancaria" required></textarea>

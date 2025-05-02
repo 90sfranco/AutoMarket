@@ -6,7 +6,7 @@ $usuario = $_POST["usuario"];
 $password = $_POST["password"];
 
 if(empty($usuario) || empty($password)){
-    header("Location: /automarketweb/views/login.php?error=campos_vacios");
+    header("Location: /views/login.php?error=campos_vacios");
     exit();
 }
 
@@ -36,7 +36,7 @@ $response = curl_exec($ch);
 // Manejar errores de cURL
 if($response === false){
     curl_close($ch);
-    header("Location: /automarketweb/views/login.php?error=conexion_fallida");
+    header("Location: /views/login.php?error=conexion_fallida");
     exit();
 }
 curl_close($ch);
@@ -49,7 +49,7 @@ if(isset($responseData["id"])){
     // Login exitoso: se guardan datos en sesión y se redirige normalmente
     $_SESSION['id_usuario'] = $responseData["id"];
     $_SESSION['nombre'] = $responseData["nombre"];
-    header("Location: /automarketweb/views/vehicles.php");
+    header("Location: /views/vehicles.php");
     exit();
 } else {
     // Login fallido: se muestra un mensaje de alerta y se redirige al login después de 4 segundos
@@ -65,7 +65,7 @@ if(isset($responseData["id"])){
     </div>
     <script>
         setTimeout(function(){
-            window.location.href = '/automarketweb/views/login.php';
+            window.location.href = '/views/login.php';
         }, 1000);
     </script>
 </div>

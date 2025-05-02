@@ -18,7 +18,7 @@ $data = json_encode([
 ]);
 
 // Usamos cURL para consumir el servicio filtrado.
-$url = VEHICLES_SERVICE_URL . '/get-filtered';
+$url = VEHICLES_QUERIES_SERVICE_URL . '/get-filtered';
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
@@ -42,7 +42,7 @@ if (!$vehicles) {
     <div class="row g-3">
         <div class="col-md-4">
             <label for="marca" class="form-label">Marca</label>
-            <input type="text" id="marca" name="marca" class="form-control" placeholder="Ej: Toyota" value="<?php echo htmlspecialchars($filters['marca']); ?>">
+            <input type="text" id="marca" name="marca" class="form-control" placeholder="Ej: Toyota" value="<?php echo htmlspecialchars($filters['marca'] ?? ''); ?>">
         </div>
         <div class="col-md-4">
             <label for="precio_min" class="form-label">Precio Mínimo</label>
@@ -74,4 +74,4 @@ if (!$vehicles) {
     var vehiclesData = <?php echo json_encode($vehicles); ?>;
 </script>
 <!-- Cargar el script de paginación y renderizado -->
-<script src="/automarketweb/assets/js/vehicles.js"></script>
+<script src="../assets/js/vehicles.js"></script>

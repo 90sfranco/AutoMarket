@@ -2,7 +2,7 @@
 <div class="row justify-content-center">
     <div class="col-md-6">
         <h2 class="fs-2 mb-4">Iniciar Sesión</h2>
-        <form action="/automarketweb/api/login_process.php" method="POST" id="loginForm">
+        <form action="../api/login_process.php" method="POST" id="loginForm">
             <div class="mb-3">
                 <label for="usuario" class="form-label">Usuario</label>
                 <input type="text" id="usuario" name="usuario" class="form-control" required>

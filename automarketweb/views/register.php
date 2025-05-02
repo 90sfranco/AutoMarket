@@ -11,7 +11,7 @@
             echo "<div class='alert alert-success text-center'>" . htmlspecialchars($_GET['success']) . "</div>";
         }
         ?>
-        <form action="/automarketweb/api/register_process.php" method="POST">
+        <form action="../api/register_process.php" method="POST">
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre Completo</label>
                 <input type="text" id="nombre" name="nombre" class="form-control" required>

@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </p>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="/automarketweb/views/vehicle_detail.php?id=${vehiculo.id_vehiculo}" class="btn btn-primary">Ver Detalle</a>
+                        <a href="../../views/vehicle_detail.php?id=${vehiculo.id_vehiculo}" class="btn btn-primary">Ver Detalle</a>
                     </div>
                 </div>
             `;

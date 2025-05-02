@@ -36,6 +36,7 @@ if ($idVehiculo <= 0 || $idUsuario <= 0 || empty($marca)) {
 
 // Construir el arreglo de datos (sin campo "estado")
 $data = [
+    '_id'              => ['id_vehiculo' => $idVehiculo],
     'marca'            => $marca,
     'anio'             => $anio,
     'modelo'           => $modelo,
@@ -55,7 +56,7 @@ $data = [
 ];
 
 // Preparar la solicitud cURL para enviar la actualización (método PUT o PATCH)
-$url = VEHICLES_SERVICE_URL . '/edit/' . $idVehiculo;
+$url = VEHICLES_COMMANDS_SERVICE_URL . '/edit/' . $idVehiculo; // Endpoint en commandsController.js
 $ch = curl_init($url);
 $jsonData = json_encode($data);
 
