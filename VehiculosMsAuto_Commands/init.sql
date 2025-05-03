@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS vehiculo (
     tipo_combustible VARCHAR(30) NOT NULL,
     precio DECIMAL(10,2) NOT NULL,
     estado VARCHAR(10) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_usuario INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
