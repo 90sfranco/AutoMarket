@@ -12,6 +12,11 @@ function transformVehicle(vehicle) {
     ? Number(plain.precio.$numberDecimal)
     : plain.precio;
 
+  const fechaOriginal = plain.fecha_creacion;
+  const fechaFormateada = fechaOriginal
+    ? new Date(fechaOriginal).toISOString().split("T")[0]
+    : null;
+
   return {
     id_vehiculo: plain._id?.id_vehiculo || plain.id_vehiculo,
     marca: plain.marca,
@@ -29,9 +34,11 @@ function transformVehicle(vehicle) {
     tipo_combustible: plain.tipo_combustible,
     precio,
     estado: plain.estado,
+    fechaCreacion: fechaFormateada,
     id_usuario: plain.id_usuario
   };
 }
+
 
 // Obtener todos los vehículos
 router.get('/vehiculos/all', async (req, res) => {

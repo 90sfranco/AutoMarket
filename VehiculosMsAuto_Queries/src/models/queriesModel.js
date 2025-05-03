@@ -55,32 +55,59 @@ async function getVehiclesByUser(userId) {
 }
 
 /**
-* Obtiene vehículos filtrados según la marca y/o rango de precio.
+* Obtiene vehículos filtrados según la marca, o rango de precio o rango de fechas.
 * Si no se envía alguno de los filtros, se omite esa condición.
 */
+function buildEstadoFilter() {
+  return { estado: 'disponible' };
+}
+function buildAnioFilter(anio) {
+  const parsed = parseInt(anio, 10);
+  return !isNaN(parsed) ? { anio: parsed } : {};
+}
+
+
+function buildMarcaFilter(marca) {
+  if (marca && marca.trim() !== '') {
+    return {
+      marca: { $regex: new RegExp(`^${marca.trim()}$`, 'i') }
+    };
+  }
+  return {};
+}
+
+function buildPrecioFilter(precioInicial, precioFinal) {
+  const priceQuery = {};
+  const min = parseFloat(precioInicial);
+  const max = parseFloat(precioFinal);
+
+  if (!isNaN(min)) priceQuery.$gte = min;
+  if (!isNaN(max)) priceQuery.$lte = max;
+
+  return Object.keys(priceQuery).length > 0 ? { precio: priceQuery } : {};
+}
+
+function buildFechaFilter(fechaInicial, fechaFinal) {
+  const dateQuery = {};
+  const desde = fechaInicial ? `${fechaInicial}T00:00:00Z` : null;
+  const hasta = fechaFinal ? `${fechaFinal}T23:59:59Z` : null;
+
+  if (desde) dateQuery.$gte = desde;
+  if (hasta) dateQuery.$lte = hasta;
+
+  return Object.keys(dateQuery).length > 0 ? { fecha_creacion: dateQuery } : {};
+}
+
 async function getFilteredVehicles(filters) {
   const vehiculoCollection = await connectDB();
-  let query = { estado: 'disponible' }; // Filtrar siempre por disponibles
 
-  if (filters.marca && filters.marca.trim() !== '') {
-      // Búsqueda insensible a mayúsculas/minúsculas para la marca
-      query.marca = { $regex: new RegExp(`^${filters.marca.trim()}$`, 'i') };
-  }
-
-  let priceQuery = {};
-  const precioInicial = parseFloat(filters.precio_inicial);
-  const precioFinal = parseFloat(filters.precio_final);
-
-  if (!isNaN(precioInicial)) {
-      priceQuery.$gte = precioInicial;
-  }
-  if (!isNaN(precioFinal)) {
-      priceQuery.$lte = precioFinal;
-  }
-
-  if (Object.keys(priceQuery).length > 0) {
-      query.precio = priceQuery;
-  }
+  const query = {
+    ...buildEstadoFilter(),
+    ...buildAnioFilter(filters.anio),
+    ...buildMarcaFilter(filters.marca),
+    ...buildPrecioFilter(filters.precio_inicial, filters.precio_final),
+    ...buildFechaFilter(filters.fecha_inicial, filters.fecha_final)
+  };
 
   console.log("Consulta filtrada MongoDB:", JSON.stringify(query));
   const result = await vehiculoCollection.find(query).toArray();
