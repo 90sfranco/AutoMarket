@@ -1,34 +1,40 @@
+#############################
+# API Gateway – Kong
+#############################
 services:
+  kong:                         # API Gateway Kong
+    image: kong:3.7
+    container_name: kong
+    ports:
+      - "8000:8000"              # Puerto público para clientes
+      - "8001:8001"              # Admin API (útil para pruebas internas)
+    environment:
+      KONG_DATABASE: "off"       # Modo DB‑less
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml   # Rutas/servicios declarativos
+      KONG_LOG_LEVEL: info
+    volumes:
+      - ./kong-config:/etc/kong  # Aquí guardamos kong.yml
+    depends_on:                  # Kong arranca cuando estos back‑ends están listos
+      - usuarios-ms
+      - vehiculos-queries-ms
+      - vehiculos-commands-ms
+      - contratos-ms
+      - ventas-ms
+    networks:
+      - microservices-net
+
+  ################# 
+  # MICROSERVICIOS 
+  #################
   usuarios-ms:
     build: ./UsuariosMsAuto
-    ports: ["3000:4001"]
+    expose: ["4001"]             # Se quitó 'ports', solo se expone internamente
     depends_on: [usuarios-db]
     networks: [microservices-net]
 
-  usuarios-db:
-    image: mysql:8.0.36
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    networks:
-      - microservices-net
-    volumes:
-      - mysql-usuarios-data:/var/lib/mysql  # Persistencia de datos
-      - ./UsuariosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql 
-
-  vehiculos-queries-db:
-    image: mongo:7.0.5
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: vehiculosdbauto_read
-    networks:
-      - microservices-net
-    volumes:
-      - mongo-vehiculos-data:/data/db  # Persistencia de datos MongoDB
-
   vehiculos-queries-ms:
     build: ./VehiculosMsAuto_Queries
-    ports: ["3001:4005"]
+    expose: ["4005"]
     depends_on: [vehiculos-queries-db]
     networks: [microservices-net]
 
@@ -36,8 +42,7 @@ services:
     build:
       context: ./VehiculosMsAuto_Commands
       dockerfile: Dockerfile
-    ports:
-      - "3002:4006"
+    expose: ["4006"]
     environment:
       DB_HOST: vehiculos-commands-db
       DB_PORT: 3306
@@ -50,8 +55,52 @@ services:
       - kafka
       - kafka-connect
       - init-connectors
+    networks: [microservices-net]
+
+  contratos-ms:
+    build: ./ContratosMsAuto
+    expose: ["4003"]
+    depends_on: [contratos-db]
+    networks: [microservices-net]
+
+  ventas-ms:
+    build: ./VentasMsAuto
+    expose: ["4004"]
+    depends_on: [ventas-db]
+    networks: [microservices-net]
+
+  automarketweb:
+    build:
+      context: ./automarketweb
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"   
+    depends_on:
+      - kong       
     networks:
       - microservices-net
+
+
+  #####################
+  # BASES DE DATOS 
+  #####################
+  usuarios-db:
+    image: mysql:8.0.36
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks: [microservices-net]
+    volumes:
+      - mysql-usuarios-data:/var/lib/mysql
+      - ./UsuariosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  vehiculos-queries-db:
+    image: mongo:7.0.5
+    expose: ["27017"]            # dejó de publicarse al host
+    environment:
+      MONGO_INITDB_DATABASE: vehiculosdbauto_read
+    networks: [microservices-net]
+    volumes:
+      - mongo-vehiculos-data:/data/db
 
   vehiculos-commands-db:
     image: mysql:8.0.36
@@ -65,70 +114,45 @@ services:
       --binlog-format=ROW
       --gtid-mode=ON
       --enforce-gtid-consistency=TRUE
-    volumes:
-      - mysql-vehiculos-data:/var/lib/mysql  # Persistencia de datos
-      - ./VehiculosMsAuto_Commands/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - microservices-net
-
-  contratos-ms:
-    build: ./ContratosMsAuto
-    ports: ["3003:4003"]
-    depends_on: [contratos-db]
     networks: [microservices-net]
+    volumes:
+      - mysql-vehiculos-data:/var/lib/mysql
+      - ./VehiculosMsAuto_Commands/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   contratos-db:
     image: mysql:8.0.36
     environment:
       MYSQL_ROOT_PASSWORD: root
-    networks:
-      - microservices-net
-    volumes:
-      - mysql-contratos-data:/var/lib/mysql  # Persistencia de datos
-      - ./ContratosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  ventas-ms:
-    build: ./VentasMsAuto
-    ports: ["3004:4004"]
-    depends_on: [ventas-db]
     networks: [microservices-net]
+    volumes:
+      - mysql-contratos-data:/var/lib/mysql
+      - ./ContratosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   ventas-db:
     image: mysql:8.0.36
     environment:
       MYSQL_ROOT_PASSWORD: root
-    networks:
-      - microservices-net
+    networks: [microservices-net]
     volumes:
-      - mysql-ventas-data:/var/lib/mysql  # Persistencia de datos
+      - mysql-ventas-data:/var/lib/mysql
       - ./VentasMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  automarketweb:
-    build:
-      context: ./automarketweb
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    networks:
-      - microservices-net
-
+  ################################
+  # Kafka, Zookeeper y utilidades 
+  ################################
   zookeeper:
     image: confluentinc/cp-zookeeper:latest-ubi8
-    ports:
-      - "2181:2181"
+    ports: ["2181:2181"]
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - microservices-net
+    networks: [microservices-net]
 
   kafka:
     image: confluentinc/cp-kafka:latest-ubi8
     container_name: kafka-vehiculos
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
+    depends_on: [zookeeper]
+    ports: ["9092:9092"]
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -136,14 +160,12 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - microservices-net
+    networks: [microservices-net]
 
   kafka-connect:
     container_name: kafka-connect
     image: debezium/connect:2.7.3.Final
-    ports:
-      - "8083:8083"
+    ports: ["8083:8083"]
     environment:
       GROUP_ID: 1
       ADVERTISED_HOST_NAME: kafka-connect
@@ -158,57 +180,48 @@ services:
       CONNECT_PLUGIN_PATH: "/kafka/connect,/opt/kafka/plugins"
     volumes:
       - ./VehiculosMsAuto_Queries/kafka-connect:/opt/kafka/plugins
-    depends_on:
-      - zookeeper
-      - kafka
-    networks:
-      - microservices-net
+    depends_on: [zookeeper, kafka]
+    networks: [microservices-net]
 
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
-    ports:
-      - "8080:8080"
+    ports: ["8080:8080"]
     environment:
       KAFKA_CLUSTERS_0_NAME: vehiculos-cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: vehiculos-connect
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect:8083
       DYNAMIC_CONFIG_ENABLED: "true"
-    depends_on:
-      - kafka
-      - kafka-connect
-    networks:
-      - microservices-net
+    depends_on: [kafka, kafka-connect]
+    networks: [microservices-net]
 
   init-connectors:
     image: curlimages/curl
     container_name: init-kafka-connectors
-    depends_on:
-      - kafka-connect
+    depends_on: [kafka-connect]
     entrypoint: ["/bin/sh", "-c"]
     command: >
-      "
-      echo 'Esperando a Kafka Connect...' &&
-      until curl -s http://kafka-connect:8083/connectors; do sleep 5; done &&
-      sleep 10 && \
-      echo 'Registrando conector MySQL...' &&
-      curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data @/opt/kafka/configs/mysql-connector.json http://kafka-connect:8083/connectors &&
-      echo 'Registrando conector Mongo Sink...' &&
-      curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data @/opt/kafka/configs/mongo-sink-connector.json http://kafka-connect:8083/connectors
-      "
+      "echo 'Esperando a Kafka Connect...' &&
+       until curl -s http://kafka-connect:8083/connectors; do sleep 5; done &&
+       sleep 10 &&
+       echo 'Registrando conector MySQL...' &&
+       curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data @/opt/kafka/configs/mysql-connector.json http://kafka-connect:8083/connectors &&
+       echo 'Registrando conector Mongo Sink...' &&
+       curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data @/opt/kafka/configs/mongo-sink-connector.json http://kafka-connect:8083/connectors"
     volumes:
       - ./VehiculosMsAuto_Queries/kafka-connect:/opt/kafka/configs
-    networks:
-      - microservices-net
+    networks: [microservices-net]
 
+#############################
 networks:
   microservices-net:
     driver: bridge
 
+#############################
 volumes:
-  mysql-usuarios-data:  # Volumen persistente para la base de datos de usuarios
-  mysql-vehiculos-data:  # Volumen persistente para la base de datos de vehículos
-  mysql-contratos-data:  # Volumen persistente para la base de datos de contratos
-  mysql-ventas-data:  # Volumen persistente para la base de datos de ventas
-  mongo-vehiculos-data:  # Volumen persistente para MongoDB
+  mysql-usuarios-data:
+  mysql-vehiculos-data:
+  mysql-contratos-data:
+  mysql-ventas-data:
+  mongo-vehiculos-data:

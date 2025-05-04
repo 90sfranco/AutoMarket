@@ -3,7 +3,7 @@ const router = Router();
 const vehiculosModel = require('../models/commandsModel');
 const axios = require('axios'); // Importar axios para llamadas HTTP
 
-const USUARIOS_MS_URL = process.env.USUARIOS_MS_URL || 'http://usuarios-ms:4001'; // URL base del microservicio de usuarios
+const USUARIOS_MS_URL = process.env.USUARIOS_MS_URL || 'http://kong:8000/usuarios'; // URL base del microservicio de usuarios
 
 // Función para validar los datos del vehículo
 const validateVehicleData = (data) => {
