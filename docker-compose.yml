@@ -1,16 +1,13 @@
-#############################
-# API Gateway – Kong
-#############################
 services:
   kong:                         # API Gateway Kong
     image: kong:3.7
     container_name: kong
-    ports:
-      - "8000:8000"              # Puerto público para clientes
-      - "8001:8001"              # Admin API (útil para pruebas internas)
+    expose:
+      - "8000"
     environment:
       KONG_DATABASE: "off"       # Modo DB‑less
       KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml   # Rutas/servicios declarativos
+      KONG_ADMIN_LISTEN: "off"
       KONG_LOG_LEVEL: info
     volumes:
       - ./kong-config:/etc/kong  # Aquí guardamos kong.yml
@@ -26,6 +23,7 @@ services:
   ################# 
   # MICROSERVICIOS 
   #################
+
   usuarios-ms:
     build: ./UsuariosMsAuto
     expose: ["4001"]             # Se quitó 'ports', solo se expone internamente
@@ -79,7 +77,6 @@ services:
       - kong       
     networks:
       - microservices-net
-
 
   #####################
   # BASES DE DATOS 
@@ -142,7 +139,8 @@ services:
   ################################
   zookeeper:
     image: confluentinc/cp-zookeeper:latest-ubi8
-    ports: ["2181:2181"]
+    expose: 
+      - "2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -151,8 +149,9 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest-ubi8
     container_name: kafka-vehiculos
+    expose:
+      - "9092"
     depends_on: [zookeeper]
-    ports: ["9092:9092"]
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -165,7 +164,8 @@ services:
   kafka-connect:
     container_name: kafka-connect
     image: debezium/connect:2.7.3.Final
-    ports: ["8083:8083"]
+    expose: 
+      - "8083" 
     environment:
       GROUP_ID: 1
       ADVERTISED_HOST_NAME: kafka-connect
@@ -186,7 +186,8 @@ services:
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
-    ports: ["8080:8080"]
+    expose: 
+      - "8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: vehiculos-cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
@@ -204,7 +205,7 @@ services:
     command: >
       "echo 'Esperando a Kafka Connect...' &&
        until curl -s http://kafka-connect:8083/connectors; do sleep 5; done &&
-       sleep 10 &&
+       sleep 15 &&
        echo 'Registrando conector MySQL...' &&
        curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data @/opt/kafka/configs/mysql-connector.json http://kafka-connect:8083/connectors &&
        echo 'Registrando conector Mongo Sink...' &&

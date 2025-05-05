@@ -1,0 +1,55 @@
+_format_version: "3.0"
+
+services:
+  # ---------- Usuarios ----------------
+  - name: usuarios-service
+    url: http://usuarios-ms:4001
+    routes:
+      - name: usuarios-route
+        paths: [
+            "/usuarios", # Ruta para obtener por id
+            "/usuarios/login",
+            "/usuarios/create",
+            "/usuarios/edit",
+            "/usuarios/delete",
+          ] # Rutas de la API de usuarios
+        strip_path: false # Mantiene la ruta original ("/usuarios/") en las peticiones
+
+  # ---------- Vehículos (Queries) -----
+  - name: vehiculos-queries-service
+    url: http://vehiculos-queries-ms:4005
+    routes:
+      - name: vehiculos-queries-route
+        paths: ["/vehiculos", "/vehiculos/get-filtered", "/vehiculos/when-user"] # Rutas de la API de vehículos
+        strip_path: false
+
+  # ---------- Vehículos (Commands) ----
+  - name: vehiculos-commands-service
+    url: http://vehiculos-commands-ms:4006
+    routes:
+      - name: vehiculos-commands-route
+        paths: ["/vehiculos/create", "/vehiculos/edit", "/vehiculos/delete"]
+        strip_path: false
+
+  # ---------- Contratos ---------------
+  - name: contratos-service
+    url: http://contratos-ms:4003
+    routes:
+      - name: contratos-route
+        paths: [
+            "/contratos",
+            "/contratos/create",
+            "/contratos/user",
+            "/contratos/seller",
+            "/contratos/edit",
+            "/contratos/delete",
+          ] # Rutas de la API de contratos
+        strip_path: false
+
+  # ---------- Ventas ------------------
+  - name: ventas-service
+    url: http://ventas-ms:4004
+    routes:
+      - name: ventas-route
+        paths: ["/ventas", "/ventas/create", "/ventas/user"] # Rutas de la API de ventas
+        strip_path: false
