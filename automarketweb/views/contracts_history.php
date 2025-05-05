@@ -15,7 +15,7 @@
 </div>
 
 <!-- Contenedor para las tarjetas de contratos -->
-<div id="contractsContainer" class="row row-cols-1 row-cols-md-3 g-4" style="margin-top: 50px; display: none;"></div>
+<div id="contractsContainer" class="row row-cols-1 row-cols-md-3 g-2" style="margin-top: 50px; display: none;"></div>
 
 <?php include '../includes/footer.php'; ?>
 

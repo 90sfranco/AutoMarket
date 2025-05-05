@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </p>
                         </div>
                         <div class="card-footer text-center bg-white">
-                            <a href="../../views/contract_detail.php?id=${contrato.id_contrato}" class="btn btn-outline-primary">Ver Detalle</a>
+                            <a href="../../views/contract_detail.php?id=${contrato.id_contrato}" class="btn btn-secondary">Ver Detalle</a>
                         </div>
                     </div>
                 `;

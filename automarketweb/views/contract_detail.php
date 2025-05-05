@@ -138,7 +138,7 @@ if (!$vehiculo) {
 // Mostrar botón "Firmar Contrato" solo si el usuario en sesión es el vendedor del contrato
 // y el contrato NO está completado
 if ($_SESSION['id_usuario'] == $contrato['id_vendedor']
-    && $contrato['estado_contrato'] !== 'completado'
+    && $contrato['estado_contrato'] === 'En proceso'
 ) : 
 ?>
     <div class="text-center mt-3">

@@ -172,7 +172,7 @@ echo $alertHtml;
       </div>
       <input type="hidden" name="estado" value="disponible">
       <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?? 0; ?>">
-      <button type="submit" class="btn btn-primary">Publicar Vehículo</button>
+      <button type="submit" class="btn btn-secondary">Publicar Vehículo</button>
     </form>
   </div>
 </div>
