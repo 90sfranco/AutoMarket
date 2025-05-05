@@ -33,11 +33,6 @@ h1, h2, h3 {
     font-size: clamp(1.5rem, 2.5vw, 2.5rem);
 }
 
-/* Estilo de tarjetas */
-.card {
-    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
-    margin-bottom: 1rem;
-}
 
 /* Botones con padding relativo */
 .btn {
@@ -65,14 +60,6 @@ footer {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-}
-
-/* Contenedor para las tarjetas de contratos, con estilo flexbox */
-#contractsContainer {
-    display: flex; /* Usamos flexbox para las tarjetas */
-    flex-wrap: wrap; /* Las tarjetas se envuelven en varias filas */
-    justify-content: flex-start; /* Las tarjetas se alinean de izquierda a derecha */
-    gap: 20px; /* Espacio entre las tarjetas */
 }
 
 /* Estilos de las tarjetas */

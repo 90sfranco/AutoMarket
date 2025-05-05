@@ -42,15 +42,6 @@ router.get('/contratos/user/:id', async (req, res) => {
     }
 });
 
-router.get('/contratos/seller/:id', async (req, res) => {
-    const id = req.params.id;
-    try {
-        const contracts = await contratosModel.getContractsBySeller(id);
-        res.json(contracts);
-    } catch (error) {
-        res.status(500).send(`Error de servidor: ${error.message}`);
-    }
-});
 
 // Crear un nuevo contrato
 router.post('/contratos/create/:idUsuario/:idVehiculo', async (req, res) => {

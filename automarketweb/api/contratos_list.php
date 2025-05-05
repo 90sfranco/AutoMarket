@@ -10,9 +10,8 @@ if (!isset($_SESSION['id_usuario'])) {
 
 $idUsuario = $_SESSION['id_usuario'];
 
-// Definir ambos endpoints
-$endpointComprador = CONTRACTS_SERVICE_URL . '/user/' . $idUsuario;
-$endpointVendedor = CONTRACTS_SERVICE_URL . '/seller/' . $idUsuario;
+// Definir el endpoint unificado (/user)
+$endpoint = CONTRACTS_SERVICE_URL . '/user/' . $idUsuario;
 
 // Función para realizar la consulta con cURL y decodificar la respuesta JSON
 function obtenerContratos($url) {
@@ -29,17 +28,10 @@ function obtenerContratos($url) {
     return [];
 }
 
-// Obtener contratos de comprador y vendedor
-$contratosComprador = obtenerContratos($endpointComprador);
-$contratosVendedor = obtenerContratos($endpointVendedor);
-
-// Concatenar resultados; si se desea conservarlos separados, se pueden asignar a diferentes claves
-$resultado = array_merge(
-    (array)$contratosComprador,
-    (array)$contratosVendedor
-);
+// Obtener todos los contratos (tanto como comprador como vendedor)
+$contratos = obtenerContratos($endpoint);
 
 // Enviar respuesta JSON
 header('Content-Type: application/json');
-echo json_encode($resultado);
+echo json_encode($contratos);
 ?>

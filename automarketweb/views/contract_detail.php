@@ -65,16 +65,14 @@ if (!$vehiculo) {
 <h2 class="fs-2 mb-4 text-center">Detalle del Contrato</h2>
 
 <!-- Lógica de mensajes según estado y usuario -->
-<?php if ($contrato['estado_contrato'] === 'completado'): ?>
-    <?php if ($_SESSION['id_usuario'] == $contrato['id_vendedor']): ?>
-        <div class="alert alert-info text-center mx-auto" style="max-width: fit-content;">
-            💸 Esperando pago de <strong><?php echo htmlspecialchars($contrato['comprador_nombre']); ?></strong>
-        </div>
-    <?php elseif ($_SESSION['id_usuario'] == $contrato['id_comprador'] && $vehiculo['estado'] !== 'vendido'): ?>
-        <div class="alert alert-info text-center mx-auto" style="max-width: fit-content;">
-            💸 ¡Ya puedes realizar el pago de tu futuro <?php echo htmlspecialchars($contrato['vehiculo_marca']) . " " . htmlspecialchars($contrato['vehiculo_modelo']); ?>!
-        </div>
-    <?php endif; ?>
+<?php if ($_SESSION['id_usuario'] == $contrato['id_vendedor'] && $contrato['estado_contrato'] === 'completado' && $vehiculo['estado'] !== 'vendido'): ?>
+    <div class="alert alert-info text-center mx-auto" style="max-width: fit-content;">
+        💸 Esperando pago de <strong><?php echo htmlspecialchars($contrato['comprador_nombre']); ?></strong>
+    </div>
+<?php elseif ($_SESSION['id_usuario'] == $contrato['id_comprador'] && $vehiculo['estado'] !== 'vendido'): ?>
+    <div class="alert alert-info text-center mx-auto" style="max-width: fit-content;">
+        💸 ¡Ya puedes realizar el pago de tu futuro <?php echo htmlspecialchars($contrato['vehiculo_marca']) . " " . htmlspecialchars($contrato['vehiculo_modelo']); ?>!
+    </div>
 <?php elseif ($contrato['estado_contrato'] === 'En proceso'): ?>
     <?php if ($_SESSION['id_usuario'] == $contrato['id_comprador']): ?>
         <div class="alert alert-info text-center mx-auto" style="max-width: fit-content;">
