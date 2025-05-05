@@ -110,7 +110,7 @@ async function getFilteredVehicles(filters) {
   };
 
   console.log("Consulta filtrada MongoDB:", JSON.stringify(query));
-  const result = await vehiculoCollection.find(query).toArray();
+  const result = await vehiculoCollection.find(query).sort({ fecha_creacion: -1 }).toArray();
   return result;
 }
 

@@ -3,7 +3,7 @@ const router = Router();
 const vehiculosModel = require('../models/commandsModel');
 const axios = require('axios'); // Importar axios para llamadas HTTP
 
-const USUARIOS_MS_URL = process.env.USUARIOS_MS_URL || 'http://usuarios-ms:4001'; // URL base del microservicio de usuarios
+const USUARIOS_MS_URL = 'http://kong:8000/usuarios'; // URL base del microservicio de usuarios
 
 // Función para validar los datos del vehículo
 const validateVehicleData = (data) => {
@@ -60,7 +60,7 @@ router.post('/vehiculos/create', async (req, res) => {
         // Validar existencia del usuario
         const { idUsuario } = vehicleData;
         try {
-            const userResponse = await axios.get(`${USUARIOS_MS_URL}/usuarios/${idUsuario}`);
+            const userResponse = await axios.get(`${USUARIOS_MS_URL}/${idUsuario}`);
             if (userResponse.status !== 200 || !userResponse.data) {
                 return res.status(400).send(`El usuario con ID ${idUsuario} no existe.`);
             }
@@ -120,7 +120,7 @@ router.put('/vehiculos/edit/:id', async (req, res) => {
         // Validar existencia del usuario
         const { idUsuario } = vehicleData;
          try {
-            const userResponse = await axios.get(`${USUARIOS_MS_URL}/usuarios/${idUsuario}`);
+            const userResponse = await axios.get(`${USUARIOS_MS_URL}/${idUsuario}`);
             if (userResponse.status !== 200 || !userResponse.data) {
                 return res.status(400).send(`El usuario con ID ${idUsuario} no existe.`);
             }

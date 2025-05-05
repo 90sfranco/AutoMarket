@@ -4,8 +4,8 @@ const axios = require('axios');
 const contratosModel = require('../models/contratosModel');
 
 // URL base de los microservicios de Usuarios y Vehículos (ajusta según tu entorno)
-const USERS_SERVICE_URL = 'http://usuarios-ms:4001/usuarios';
-const VEHICLES_SERVICE_URL = 'http://vehiculos-queries-ms:4005/vehiculos';
+const USERS_SERVICE_URL = 'http://kong:8000/usuarios';
+const VEHICLES_SERVICE_URL = 'http://kong:8000/vehiculos';
 
 // Obtener todos los contratos
 router.get('/contratos/all', async (req, res) => {
@@ -42,15 +42,6 @@ router.get('/contratos/user/:id', async (req, res) => {
     }
 });
 
-router.get('/contratos/seller/:id', async (req, res) => {
-    const id = req.params.id;
-    try {
-        const contracts = await contratosModel.getContractsBySeller(id);
-        res.json(contracts);
-    } catch (error) {
-        res.status(500).send(`Error de servidor: ${error.message}`);
-    }
-});
 
 // Crear un nuevo contrato
 router.post('/contratos/create/:idUsuario/:idVehiculo', async (req, res) => {

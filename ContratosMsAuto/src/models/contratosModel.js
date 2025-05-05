@@ -19,21 +19,18 @@ async function getContractById(id) {
     const result = await pool.query('SELECT * FROM contrato WHERE id_contrato = ?', [id]);
     return result[0];
 }
-// Consultar un contrato por id_vendedor (para consultar contratos creados por un comprador asociados a un vehículo nuestro)
-async function getContractsBySeller(id) {
-    const result = await pool.query('SELECT * FROM contrato WHERE id_vendedor = ?', [id]);
-    return result[0];
-}
-
-// Consultar un contrato por ID
+// Contratos donde el usuario participa como vendedor o como comprador
 async function getContractsByUser(userId) {
-    const result = await pool.query('SELECT * FROM contrato WHERE id_comprador = ?', [userId]);
+    const result = await pool.query(
+        'SELECT * FROM contrato WHERE id_vendedor = ? OR id_comprador = ? ORDER BY fecha_creacion DESC',
+        [userId, userId]  // Mismo valor para ambos parámetros
+    );
     return result[0];
 }
 
 // Consultar un contrato por vehiculo
 async function getContractsByVehicle(vehicleId) {
-    const result = await pool.query('SELECT * FROM contrato WHERE id_vehiculo = ?', [vehicleId]);
+    const result = await pool.query('SELECT * FROM contrato WHERE id_vehiculo = ? ORDER BY fecha_creacion DESC', [vehicleId]);
     return result[0];
 }
 
@@ -99,7 +96,6 @@ module.exports = {
     getContractsByUser,
     patchContractState,
     getContractsByVehicle,
-    getContractsBySeller,
     createContract,
     countContracts,
     deleteContract

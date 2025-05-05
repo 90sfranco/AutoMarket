@@ -42,12 +42,16 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             <li class="nav-item">
               <a class="nav-link text-white" href="../views/vehicles.php">Vehículos</a>
             </li>
+            <?php if (isset($_SESSION['id_usuario'])): ?>
             <li class="nav-item">
               <a class="nav-link text-white" href="../views/contracts_history.php">Contratos</a>
             </li>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['id_usuario'])): ?>
             <li class="nav-item">
               <a class="nav-link text-white" href="../views/vehicle_sale.php">Ventas</a>
             </li>
+            <?php endif; ?>
             <?php if (isset($_SESSION['id_usuario'])): ?>
               <!-- Dropdown para usuario autenticado -->
               <li class="nav-item dropdown">

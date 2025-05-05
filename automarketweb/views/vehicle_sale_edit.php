@@ -107,7 +107,7 @@ $vehicle = json_decode($response, true);
     <!-- Eliminamos el campo de "estado", ya que no lo define el usuario -->
     <input type="hidden" name="estado" value="disponible">
     <input type="hidden" name="id_usuario" value="<?php echo $_SESSION['id_usuario'] ?? 0; ?>">
-    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <button type="submit" class="btn btn-success">Guardar Cambios</button>
   </form>
 </div>
 
