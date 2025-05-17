@@ -3,7 +3,19 @@
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
+$usuarioValido = "franco";
+$documentoValido = "100498477";
+
+$mostrarAnalisis = false;
+if (isset($_SESSION['id_usuario'])) {
+    if (isset($_SESSION['usuario'], $_SESSION['identificacion']) &&
+        $_SESSION['usuario'] === $usuarioValido &&
+        $_SESSION['identificacion'] === $documentoValido) {
+        $mostrarAnalisis = true;
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -50,6 +62,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             <?php if (isset($_SESSION['id_usuario'])): ?>
             <li class="nav-item">
               <a class="nav-link text-white" href="../views/vehicle_sale.php">Ventas</a>
+            </li>
+            <?php endif; ?>
+            <?php if ($mostrarAnalisis): ?>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="../views/admin.php">Análisis</a>
             </li>
             <?php endif; ?>
             <?php if (isset($_SESSION['id_usuario'])): ?>

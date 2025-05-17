@@ -1,24 +1,4 @@
 services:
-  kong:                         # API Gateway Kong
-    image: kong:3.7
-    container_name: kong
-    expose:
-      - "8000"
-    environment:
-      KONG_DATABASE: "off"       # Modo DB‑less
-      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml   # Rutas/servicios declarativos
-      KONG_ADMIN_LISTEN: "off"
-      KONG_LOG_LEVEL: info
-    volumes:
-      - ./kong-config:/etc/kong  # Aquí guardamos kong.yml
-    depends_on:                  # Kong arranca cuando estos back‑ends están listos
-      - usuarios-ms
-      - vehiculos-queries-ms
-      - vehiculos-commands-ms
-      - contratos-ms
-      - ventas-ms
-    networks:
-      - microservices-net
 
   ################# 
   # MICROSERVICIOS 
@@ -75,6 +55,27 @@ services:
       - "80:80"   
     depends_on:
       - kong       
+    networks:
+      - microservices-net
+
+  kong:                         # API Gateway Kong
+    image: kong:3.7
+    container_name: kong
+    expose:
+      - "8000"
+    environment:
+      KONG_DATABASE: "off"       # Modo sin base de datos
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml   
+      KONG_ADMIN_LISTEN: "off"
+      KONG_LOG_LEVEL: info
+    volumes:
+      - ./kong-config:/etc/kong  
+    depends_on:                  
+      - usuarios-ms
+      - vehiculos-queries-ms
+      - vehiculos-commands-ms
+      - contratos-ms
+      - ventas-ms
     networks:
       - microservices-net
 
@@ -155,7 +156,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-vehiculos:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-vehiculos:29092,PLAINTEXT_HOST://kafka-vehiculos:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -186,14 +187,17 @@ services:
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
-    expose: 
-      - "8080"
+    ports:
+      - "8080:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: vehiculos-cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: vehiculos-connect
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect:8083
       DYNAMIC_CONFIG_ENABLED: "true"
+      KAFKA_UI_AUTH_USERNAME: "automarket"         
+      KAFKA_UI_AUTH_PASSWORD: "admin"
+
     depends_on: [kafka, kafka-connect]
     networks: [microservices-net]
 

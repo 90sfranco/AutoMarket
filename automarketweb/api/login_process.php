@@ -49,6 +49,8 @@ if(isset($responseData["id"])){
     // Login exitoso: se guardan datos en sesión y se redirige normalmente
     $_SESSION['id_usuario'] = $responseData["id"];
     $_SESSION['nombre'] = $responseData["nombre"];
+    $_SESSION['usuario'] = $responseData['usuario'];
+    $_SESSION['identificacion'] = $responseData['identificacion'];
     header("Location: /views/vehicles.php");
     exit();
 } else {
