@@ -4,7 +4,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 $usuarioValido = "franco";
-$documentoValido = "100498477";
+$documentoValido = "1234567890";
 
 $mostrarAnalisis = false;
 if (isset($_SESSION['id_usuario'])) {

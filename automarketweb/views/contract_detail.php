@@ -69,7 +69,7 @@ if (!$vehiculo) {
     <div class="alert alert-info text-center mx-auto" style="max-width: fit-content;">
         💸 Esperando pago de <strong><?php echo htmlspecialchars($contrato['comprador_nombre']); ?></strong>
     </div>
-<?php elseif ($_SESSION['id_usuario'] == $contrato['id_comprador'] && $vehiculo['estado'] !== 'vendido'): ?>
+<?php elseif ($_SESSION['id_usuario'] == $contrato['id_comprador'] && $vehiculo['estado'] !== 'vendido' && $contrato['estado_contrato'] === 'completado'): ?>
     <div class="alert alert-info text-center mx-auto" style="max-width: fit-content;">
         💸 ¡Ya puedes realizar el pago de tu futuro <?php echo htmlspecialchars($contrato['vehiculo_marca']) . " " . htmlspecialchars($contrato['vehiculo_modelo']); ?>!
     </div>
