@@ -11,7 +11,7 @@
       "topic.prefix": "vehiculosprefix",
       "database.include.list": "vehiculosdbauto_write",
       "table.include.list": "vehiculosdbauto_write.vehiculo",
-      "schema.history.internal.kafka.bootstrap.servers": "kafka-vehiculos:29092",
+      "schema.history.internal.kafka.bootstrap.servers": "kafka:29092",
       "schema.history.internal.kafka.topic": "schemahistory.automarketvehicles",
       "include.schema.changes": "false",
       "snapshot.mode": "initial",

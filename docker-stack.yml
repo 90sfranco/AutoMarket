@@ -1,26 +1,45 @@
-services:
+networks:
+  microservices-net:
+    driver: overlay
 
-  ################# 
-  # MICROSERVICIOS 
+volumes:
+  mysql-usuarios-data:
+  mysql-vehiculos-data:
+  mysql-contratos-data:
+  mysql-ventas-data:
+  mongo-vehiculos-data:
+
+services:
+  #################
+  # MICROSERVICIOS
   #################
 
   usuarios-ms:
-    build: ./UsuariosMsAuto
-    expose: ["4001"]             # Se quitó 'ports', solo se expone internamente
-    depends_on: [usuarios-db]
-    networks: [microservices-net]
+    image: usuarios-ms:latest
+    depends_on:
+      - usuarios-db
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+        delay: 5s
 
   vehiculos-queries-ms:
-    build: ./VehiculosMsAuto_Queries
-    expose: ["4005"]
-    depends_on: [vehiculos-queries-db]
-    networks: [microservices-net]
+    image: vehiculos-queries-ms:latest
+    depends_on:
+      - vehiculos-queries-db
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+        delay: 5s
 
   vehiculos-commands-ms:
-    build:
-      context: ./VehiculosMsAuto_Commands
-      dockerfile: Dockerfile
-    expose: ["4006"]
+    image: vehiculos-commands-ms:latest
     environment:
       DB_HOST: vehiculos-commands-db
       DB_PORT: 3306
@@ -33,44 +52,64 @@ services:
       - kafka
       - kafka-connect
       - init-connectors
-    networks: [microservices-net]
-
-  contratos-ms:
-    build: ./ContratosMsAuto
-    expose: ["4003"]
-    depends_on: [contratos-db]
-    networks: [microservices-net]
-
-  ventas-ms:
-    build: ./VentasMsAuto
-    expose: ["4004"]
-    depends_on: [ventas-db]
-    networks: [microservices-net]
-
-  automarketweb:
-    build:
-      context: ./automarketweb
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"   
-    depends_on:
-      - kong       
     networks:
       - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
 
-  kong:                         # API Gateway Kong
+  contratos-ms:
+    image: contratos-ms:latest
+    depends_on:
+      - contratos-db
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+
+  ventas-ms:
+    image: ventas-ms:latest
+    depends_on:
+      - ventas-db
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+
+  automarketweb:
+    image: automarketweb:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - kong
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+        delay: 5s
+      placement:
+        max_replicas_per_node: 2
+
+  kong:
     image: kong:3.7
-    container_name: kong
-    expose:
-      - "8000"
     environment:
-      KONG_DATABASE: "off"       # Modo sin base de datos
-      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml   
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
       KONG_ADMIN_LISTEN: "off"
       KONG_LOG_LEVEL: info
     volumes:
-      - ./kong-config:/etc/kong  
-    depends_on:                  
+      - ./kong-config:/etc/kong
+    depends_on:
       - usuarios-ms
       - vehiculos-queries-ms
       - vehiculos-commands-ms
@@ -78,27 +117,44 @@ services:
       - ventas-ms
     networks:
       - microservices-net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+        delay: 5s
+      placement:
+        max_replicas_per_node: 2
 
   #####################
-  # BASES DE DATOS 
+  # BASES DE DATOS
   #####################
+
   usuarios-db:
     image: mysql:8.0.36
     environment:
       MYSQL_ROOT_PASSWORD: root
-    networks: [microservices-net]
+    networks:
+      - microservices-net
     volumes:
       - mysql-usuarios-data:/var/lib/mysql
       - ./UsuariosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
   vehiculos-queries-db:
     image: mongo:7.0.5
-    expose: ["27017"]            # dejó de publicarse al host
     environment:
       MONGO_INITDB_DATABASE: vehiculosdbauto_read
-    networks: [microservices-net]
+    networks:
+      - microservices-net
     volumes:
       - mongo-vehiculos-data:/data/db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
   vehiculos-commands-db:
     image: mysql:8.0.36
@@ -106,67 +162,86 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_SECURE_FILE_PRIV: ""
     command:
-      --secure-file-priv=/tmp/
-      --server-id=223344
-      --log-bin=mysql-bin
-      --binlog-format=ROW
-      --gtid-mode=ON
-      --enforce-gtid-consistency=TRUE
-    networks: [microservices-net]
+      - --secure-file-priv=/tmp/
+      - --server-id=223344
+      - --log-bin=mysql-bin
+      - --binlog-format=ROW
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=TRUE
+    networks:
+      - microservices-net
     volumes:
       - mysql-vehiculos-data:/var/lib/mysql
       - ./VehiculosMsAuto_Commands/init.sql:/docker-entrypoint-initdb.d/init.sql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
   contratos-db:
     image: mysql:8.0.36
     environment:
       MYSQL_ROOT_PASSWORD: root
-    networks: [microservices-net]
+    networks:
+      - microservices-net
     volumes:
       - mysql-contratos-data:/var/lib/mysql
       - ./ContratosMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
   ventas-db:
     image: mysql:8.0.36
     environment:
       MYSQL_ROOT_PASSWORD: root
-    networks: [microservices-net]
+    networks:
+      - microservices-net
     volumes:
       - mysql-ventas-data:/var/lib/mysql
       - ./VentasMsAuto/init.sql:/docker-entrypoint-initdb.d/init.sql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
   ################################
-  # Kafka, Zookeeper y utilidades 
+  # Kafka, Zookeeper y utilidades
   ################################
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest-ubi8
-    expose: 
-      - "2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    networks: [microservices-net]
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
   kafka:
     image: confluentinc/cp-kafka:latest-ubi8
-    container_name: kafka-vehiculos
-    expose:
-      - "9092"
-    depends_on: [zookeeper]
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-vehiculos:29092,PLAINTEXT_HOST://kafka-vehiculos:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks: [microservices-net]
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
   kafka-connect:
-    container_name: kafka-connect
     image: debezium/connect:2.7.3.Final
-    expose: 
-      - "8083" 
     environment:
       GROUP_ID: 1
       ADVERTISED_HOST_NAME: kafka-connect
@@ -181,11 +256,17 @@ services:
       CONNECT_PLUGIN_PATH: "/kafka/connect,/opt/kafka/plugins"
     volumes:
       - ./VehiculosMsAuto_Queries/kafka-connect:/opt/kafka/plugins
-    depends_on: [zookeeper, kafka]
-    networks: [microservices-net]
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
 
   kafka-ui:
-    container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:
       - "8080:8080"
@@ -195,16 +276,27 @@ services:
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: vehiculos-connect
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect:8083
       DYNAMIC_CONFIG_ENABLED: "true"
-      KAFKA_UI_AUTH_USERNAME: "automarket"         
+      KAFKA_UI_AUTH_USERNAME: "automarket"
       KAFKA_UI_AUTH_PASSWORD: "admin"
+    depends_on:
+      - kafka
+      - kafka-connect
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+      placement:
+        max_replicas_per_node: 1
 
-    depends_on: [kafka, kafka-connect]
-    networks: [microservices-net]
-
-  init-connectors:
+  init-kafka-connectors:
     image: curlimages/curl
-    container_name: init-kafka-connectors
-    depends_on: [kafka-connect]
+    depends_on:
+      - vehculos-queries-db
+      - vehiculos-commands-db
+      - kafka-connect
     entrypoint: ["/bin/sh", "-c"]
     command: >
       "echo 'Esperando a Kafka Connect...' &&
@@ -216,17 +308,10 @@ services:
        curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data @/opt/kafka/configs/mongo-sink-connector.json http://kafka-connect:8083/connectors"
     volumes:
       - ./VehiculosMsAuto_Queries/kafka-connect:/opt/kafka/configs
-    networks: [microservices-net]
-
-#############################
-networks:
-  microservices-net:
-    driver: bridge
-
-#############################
-volumes:
-  mysql-usuarios-data:
-  mysql-vehiculos-data:
-  mysql-contratos-data:
-  mysql-ventas-data:
-  mongo-vehiculos-data:
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5

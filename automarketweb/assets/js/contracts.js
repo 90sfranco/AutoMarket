@@ -1,21 +1,32 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const loadingIndicator   = document.getElementById('loadingIndicator');
-  const contractsContainer = document.getElementById('contractsContainer');
-  const noContractsMessage = document.getElementById('noContractsMessage');
+document.addEventListener('DOMContentLoaded', function() {
+  const contractsContainer   = document.getElementById('contractsContainer');
+  const showMoreBtn          = document.getElementById('showMoreBtn');
+  const noContractsMessage   = document.getElementById('noContractsMessage');
+  const loadingIndicator     = document.getElementById('loadingIndicator');
+  let showLessBtn            = null;
+  let contracts              = window.contractsData || [];
+  let displayedCount         = 0;
+
+  /* Ocultar spinner inmediatamente */
+  if (loadingIndicator) {
+    loadingIndicator.classList.add('d-none');
+  }
+
+  /* Ocultar mensaje de "no contratos" hasta comprobar */
+  if (noContractsMessage) {
+    noContractsMessage.classList.add('d-none');
+  }
 
   /* ---------- utilidades para el estado ---------- */
-  // Mapea cada estado (en minúsculas) a la clase bg- de Bootstrap
   const statusMap = {
-    'en proceso': 'info',
-    completado:   'success',
-    cancelado:    'danger'
+    'en proceso': 'warning',
+    'completado':   'success',
+    'cancelado':    'danger'
   };
 
-  // Devuelve el <span> formateado con badge y texto capitalizado
   function formatEstado(estadoRaw) {
-    const key = estadoRaw.toLowerCase();          // normalizar para el mapa
-    const badge = statusMap[key] || 'secondary';  // color por defecto
-    // Capitalizar cada palabra
+    const key   = estadoRaw.toLowerCase();
+    const badge = statusMap[key] || 'secondary';
     const texto = key
       .split(' ')
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
@@ -24,72 +35,80 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   /* ------------------------------------------------ */
 
-  async function loadContracts() {
-    try {
-      // mostrar spinner
-      loadingIndicator.classList.remove('d-none');
-      contractsContainer.style.display = 'none';
-      noContractsMessage.classList.add('d-none');
+  // Si no hay contratos, mostrar mensaje y ocultar botón
+  if (!Array.isArray(contracts) || contracts.length === 0) {
+    noContractsMessage.classList.remove('d-none');
+    showMoreBtn.classList.add('d-none');
+    return;
+  }
 
-      // fetch + delay mínimo
-      const fetchPromise = fetch('../../api/contratos_list.php');
-      const [response] = await Promise.all([
-        fetchPromise,
-        new Promise(r => setTimeout(r, 300))
-      ]);
-      const contracts = await response.json();
+  // Mostrar contenedor y botón
+  contractsContainer.style.display = '';
+  showMoreBtn.classList.remove('d-none');
 
-      // ocultar spinner
-      loadingIndicator.classList.add('d-none');
-
-      // si no hay contratos
-      if (!Array.isArray(contracts) || !contracts.length) {
-        noContractsMessage.classList.remove('d-none');
-        return;
-      }
-
-      // limpiar y mostrar contenedor
-      contractsContainer.innerHTML = '';
-      contractsContainer.style.display = '';
-
-      // renderizar tarjetas
-      contracts.forEach(c => {
-        const col = document.createElement('div');
-        col.className = 'col';
-        col.innerHTML = `
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title text-center">
-                Contrato ATM${c.id_contrato}
-              </h5>
-              <p class="card-text">
-                <strong>Comprador:</strong> ${c.comprador_nombre}<br>
-                <strong>Vehículo:</strong> ${c.vehiculo_marca}
-                  ${c.vehiculo_modelo} (${c.vehiculo_anio})<br>
-                <strong>Estado:</strong> ${formatEstado(c.estado_contrato)}<br>
-                <strong>Fecha:</strong>
-                  ${new Date(c.fecha_creacion).toLocaleDateString()}
-              </p>
-            </div>
-            <div class="card-footer text-center bg-white">
-              <a href="../../views/contract_detail.php?id=${c.id_contrato}"
-                 class="btn btn-outline-secondary">
-                Ver Detalle
-              </a>
-            </div>
+  function displayContracts(count) {
+    const end = Math.min(displayedCount + count, contracts.length);
+    for (let i = displayedCount; i < end; i++) {
+      const c = contracts[i];
+      const col = document.createElement('div');
+      col.className = 'col';
+      col.innerHTML = `
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-center">
+              Contrato ATM${c.id_contrato}
+            </h5>
+            <p class="card-text">
+              <strong>Comprador:</strong> ${c.comprador_nombre}<br>
+              <strong>Vehículo:</strong> ${c.vehiculo_marca}
+                ${c.vehiculo_modelo} (${c.vehiculo_anio})<br>
+              <strong>Estado:</strong> ${formatEstado(c.estado_contrato)}<br>
+              <strong>Fecha:</strong>
+                ${new Date(c.fecha_creacion).toLocaleDateString()}
+            </p>
           </div>
-        `;
-        contractsContainer.appendChild(col);
-      });
+          <div class="card-footer text-center">
+            <a href="../../views/contract_detail.php?id=${c.id_contrato}"
+               class="btn btn-outline-secondary">
+              Ver Detalle
+            </a>
+          </div>
+        </div>
+      `;
+      contractsContainer.appendChild(col);
+    }
+    displayedCount = end;
+    updateButtons();
+  }
 
-    } catch (error) {
-      console.error('Error al obtener contratos:', error);
-      loadingIndicator.classList.add('d-none');
-      noContractsMessage.textContent =
-        'Ocurrió un error al cargar los contratos.';
-      noContractsMessage.classList.remove('d-none');
+  function updateButtons() {
+    if (displayedCount > 3 && !showLessBtn) {
+      showLessBtn = document.createElement('button');
+      showLessBtn.className = 'btn btn-secondary ms-2';
+      showLessBtn.textContent = 'Mostrar menos';
+      showLessBtn.addEventListener('click', resetContracts);
+      showMoreBtn.parentNode.insertBefore(showLessBtn, showMoreBtn.nextSibling);
+    }
+    if (displayedCount === 3 && showLessBtn) {
+      showLessBtn.remove();
+      showLessBtn = null;
+    }
+    // Mostrar/ocultar botón según queden contratos
+    if (displayedCount >= contracts.length) {
+      showMoreBtn.classList.add('d-none');
+    } else {
+      showMoreBtn.classList.remove('d-none');
     }
   }
 
-  loadContracts();
+  function resetContracts() {
+    contractsContainer.innerHTML = "";
+    displayedCount = 0;
+    displayContracts(3);
+  }
+
+  showMoreBtn.addEventListener('click', () => displayContracts(3));
+
+  // Arranca mostrando las primeras 3
+  displayContracts(3);
 });
