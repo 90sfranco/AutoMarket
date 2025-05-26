@@ -21,7 +21,7 @@ services:
     networks:
       - microservices-net
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: any
         delay: 5s
@@ -33,7 +33,7 @@ services:
     networks:
       - microservices-net
     deploy:
-      replicas: 3
+      replicas: 1
       restart_policy:
         condition: any
         delay: 5s
@@ -93,12 +93,12 @@ services:
     networks:
       - microservices-net
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: any
         delay: 5s
       placement:
-        max_replicas_per_node: 2
+        max_replicas_per_node: 1
 
   kong:
     image: kong:3.7
@@ -315,3 +315,16 @@ services:
       restart_policy:
         condition: on-failure
         max_attempts: 5
+
+  kafka-streams:
+    image: kafkastreams-ms:latest
+    depends_on:
+      - kafka
+    networks:
+      - microservices-net
+    ports:
+      - "9000:9000"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any

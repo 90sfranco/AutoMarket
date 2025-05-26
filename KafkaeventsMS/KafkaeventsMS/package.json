@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "kafkajs": "^2.2.4",
-    "mongodb": "^6.16.0"
-  }
-}
