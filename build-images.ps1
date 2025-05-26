@@ -14,12 +14,14 @@ function Build-Image {
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Error al construir la imagen $Name. Deteniendo el script."
         exit 1
-    } else {
+    }
+    else {
         Write-Host "Imagen $Name construida exitosamente.`n"
     }
 }
 
 # Listar todas las imágenes que queremos construir, en orden:
+Build-Image -Name "kafkastreams-ms:latest"         -Path "./automarket_KafkaStreams"
 Build-Image -Name "usuarios-ms:latest"             -Path "./UsuariosMsAuto"
 Build-Image -Name "vehiculos-queries-ms:latest"    -Path "./VehiculosMsAuto_Queries"
 Build-Image -Name "vehiculos-commands-ms:latest"   -Path "./VehiculosMsAuto_Commands"
