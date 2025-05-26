@@ -1,0 +1,134 @@
+/* dashboard.css */
+
+/* --- Variables de color --- */
+:root {
+  --bg-color: #f8f9fa;
+  --card-color: #ffffff;
+  --text-color: #000;
+  --header-bg: #0d1a2a;
+  --card-bg-alt: #e9ecef; /* color de fondo para los iconos de las tarjetas */
+}
+
+/* --- Modo oscuro --- */
+body.dark-mode {
+  --bg-color: #1a1a2e;
+  --card-color: #2d2d44;
+  --text-color: #f8f9fa;
+  --header-bg: #16213e;
+  --card-bg-alt: #343a40;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* --- Navbar personalizada --- */
+.navbar-custom {
+  background-color: var(--header-bg);
+}
+
+.navbar-brand {
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* --- Estilos para tarjetas y gráficas --- */
+.card {
+  background-color: var(--card-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 12px;
+}
+
+/* Tarjetas de conteo (las “tarjeticas” de arriba) */
+.stat-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 0;
+}
+
+.stat-card .icon {
+  background-color: var(--card-bg-alt);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-left: 1.2rem;
+  margin: 0;
+}
+.stat-card > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+/* Margen inferior para separar filas */
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Control genérico de canvases (limitamos altura máxima) */
+canvas {
+  max-height: 280px;
+}
+
+/* --- Igualar altura entre las dos tarjetas de la columna derecha --- */
+.equal-height-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.equal-height-col {
+  display: flex;
+}
+
+.equal-height-col .card {
+  flex: 1;
+}
+
+/* Asegurar que el canvas no desborde su tarjeta */
+.equal-height-col canvas {
+  max-height: calc(100% - 48px); /* 48px aproximados de altura del header de la tarjeta */
+}
+
+/* Ajustes generales para encabezados de tarjeta y body */
+.card-header {
+  padding: 0.5rem 1rem;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Reglas para gráficos de la columna izquierda: que ocupen 100% del alto disponible --- */
+.card-body.d-flex.flex-column canvas {
+  /* El contenedor .card-body es display:flex; flex-direction:column */
+  flex: 1;       /* ocupa todo el espacio vertical restante */
+  width: 100%;   /* ancho completo del contenedor */
+}
+
+/* --- Reglas para los canvases de las tarjetas derechas: altura fija de 300px, ancho 100% --- */
+#graficoCarroceria,
+#graficoNuevo {
+  height: 300px;
+  width: 100%;
+}
+
+/* --- Ajuste de altura mínima para móviles (opcional) --- */
+@media (max-width: 576px) {
+  #graficoCarroceria,
+  #graficoNuevo {
+    height: 200px;
+  }
+}
