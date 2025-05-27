@@ -18,4 +18,11 @@ include '../includes/header.php';
     Interfaz de administración y monitoreo de Kafka para el servicio de vehículos.
   </p>
 </a>
+<a href="http://localhost:9500" class="card-custom" title="Ir a Grafana Metrics" >
+  <img src="../assets/images/grafana-logo.png" alt="Kafka UI" class="card-icon" />
+  <h3 class="card-title">Grafana Metrics</h3>
+  <p class="card-subtitle">
+    Interfaz de administración y monitoreo de Grafana.
+  </p>
+</a>
 </div>

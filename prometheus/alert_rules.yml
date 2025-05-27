@@ -1,0 +1,20 @@
+groups:
+  - name: kafka_exporter_alerts
+    rules:
+      - alert: KafkaNoMessages
+        expr: rate(vehiculos_modificados_total[15s]) < 0.01
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kafka no está recibiendo mensajes"
+          description: "No se han recibido mensajes en el tópico en los últimos 30 segundos."
+
+      - alert: KafkaHighLatency
+        expr: histogram_quantile(0.9, rate(latencia_entre_mensajes_segundos_bucket[15s])) > 1
+        for: 10s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Alta latencia en mensajes Kafka"
+          description: "El 90% de los mensajes tienen una latencia mayor a 1s en los últimos 15 segundos."

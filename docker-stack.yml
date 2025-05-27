@@ -8,6 +8,7 @@ volumes:
   mysql-contratos-data:
   mysql-ventas-data:
   mongo-vehiculos-data:
+  grafana-storage:
 
 services:
   #################
@@ -118,12 +119,12 @@ services:
     networks:
       - microservices-net
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: any
         delay: 5s
       placement:
-        max_replicas_per_node: 2
+        max_replicas_per_node: 1
 
   #####################
   # BASES DE DATOS
@@ -324,6 +325,81 @@ services:
       - microservices-net
     ports:
       - "9000:9000"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  ################################
+  # Grafana, Prometheus y Kafka Exporter
+  ################################
+
+  kafka-exporter:
+    image: kafka-exporter:latest
+    depends_on:
+      - kafka
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  alertmanager:
+    image: prom/alertmanager
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+    networks:
+      - microservices-net
+    ports:
+      - "9093:9093"
+    environment:
+      - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1376949541798023239/xD7DorUpQBbdzVdV0kFUawKElNgvaYDFWtf-MOR16glKbtAi1Q-6PyoLC-1uHyJPLjpc
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  prometheus:
+    image: prom/prometheus:main
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - kafka-exporter
+      - alertmanager
+    networks:
+      - microservices-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  grafana:
+    image: grafana/grafana:main-ubuntu
+    ports:
+      - "9500:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - microservices-net
+    depends_on:
+      - prometheus
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  discord-proxy:
+    image: discord-proxy:latest
+    networks:
+      - microservices-net
+    environment:
+      - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1376949541798023239/xD7DorUpQBbdzVdV0kFUawKElNgvaYDFWtf-MOR16glKbtAi1Q-6PyoLC-1uHyJPLjpc
     deploy:
       replicas: 1
       restart_policy:

@@ -21,7 +21,9 @@ function Build-Image {
 }
 
 # Listar todas las imágenes que queremos construir, en orden:
+Build-Image -Name "kafka-exporter:latest"          -Path "./automarket_KafkaExporter"
 Build-Image -Name "kafkastreams-ms:latest"         -Path "./automarket_KafkaStreams"
+Build-Image -Name "discord-proxy:latest"           -Path "./discord-proxy"
 Build-Image -Name "usuarios-ms:latest"             -Path "./UsuariosMsAuto"
 Build-Image -Name "vehiculos-queries-ms:latest"    -Path "./VehiculosMsAuto_Queries"
 Build-Image -Name "vehiculos-commands-ms:latest"   -Path "./VehiculosMsAuto_Commands"
